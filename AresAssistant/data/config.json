@@ -1,9 +1,8 @@
 {
   "AccentColor": "#ff2222",
-  "OverlayOpacity": 0.6660039761431411,
+  "OverlayOpacity": 0.7021868787276342,
   "FontSize": "medium",
   "OverlayPosition": "bottom-right",
-  "OverlaySize": "normal",
   "OllamaModel": "qwen2.5:32b",
   "AssistantName": "ARES",
   "Personality": "formal",
@@ -13,5 +12,6 @@
   "LaunchWithWindows": false,
   "SaveChatHistory": true,
   "CloseToTray": false,
-  "ConfirmationAlertsEnabled": true
+  "ConfirmationAlertsEnabled": true,
+  "ModelKeepAliveMinutes": 5
 }
