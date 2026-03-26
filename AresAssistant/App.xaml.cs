@@ -52,8 +52,8 @@ public partial class App : Application
         catch (Exception ex)
         {
             WriteCrash("OnStartup", ex);
-            MessageBox.Show($"Error al iniciar ARES:\n\n{ex.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
-                "ARES - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            AresMessageBox.Show($"Error al iniciar ARES:\n\n{ex.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
+                "ARES — Error");
             Shutdown(1);
         }
     }
@@ -149,8 +149,8 @@ public partial class App : Application
     private void OnDispatcherException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         WriteCrash("UI Thread", e.Exception);
-        MessageBox.Show($"Error inesperado:\n\n{e.Exception.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
-            "ARES - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        AresMessageBox.Show($"Error inesperado:\n\n{e.Exception.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
+            "ARES — Error");
         e.Handled = true;
     }
 

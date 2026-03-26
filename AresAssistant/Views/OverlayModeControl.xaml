@@ -66,42 +66,99 @@
                 <ItemsControl ItemsSource="{Binding Messages}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,4,0,0" Loaded="MessageBubble_Loaded">
-
-                                <!-- Bubble -->
-                                <Border HorizontalAlignment="{Binding IsUser, Converter={StaticResource BoolToAlignConverter}}"
-                                        MaxWidth="310" Margin="4,0">
+                            <StackPanel Margin="0,6,0,0" Loaded="MessageBubble_Loaded"
+                                        HorizontalAlignment="{Binding IsUser, Converter={StaticResource BoolToAlignConverter}}">
+                                <Border MaxWidth="310" MinWidth="140" Margin="4,0">
+                                    <Border.ContextMenu>
+                                        <ContextMenu Style="{StaticResource DarkContextMenu}">
+                                            <MenuItem Header="Copiar" Tag="📋" Style="{StaticResource DarkMenuItem}" Click="CopyMessage_Click"/>
+                                            <MenuItem Header="Leer en voz alta" Tag="🔊" Style="{StaticResource DarkMenuItem}" Click="SpeakMessage_Click"/>
+                                            <MenuItem Header="Eliminar mensaje" Tag="🗑" Style="{StaticResource DarkMenuItem}" Click="DeleteMessage_Click"/>
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
                                     <Border.Style>
                                         <Style TargetType="Border">
-                                            <Setter Property="Background" Value="#181818"/>
-                                            <Setter Property="CornerRadius" Value="12,12,12,3"/>
-                                            <Setter Property="Padding" Value="12,9"/>
-                                            <Setter Property="BorderBrush" Value="#252525"/>
+                                            <Setter Property="Background" Value="#1a1a1a"/>
+                                            <Setter Property="CornerRadius" Value="14,14,14,4"/>
+                                            <Setter Property="Padding" Value="11,9"/>
+                                            <Setter Property="BorderBrush" Value="#282828"/>
                                             <Setter Property="BorderThickness" Value="1"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsUser}" Value="True">
                                                     <Setter Property="Background" Value="#1e0909"/>
-                                                    <Setter Property="CornerRadius" Value="12,12,3,12"/>
+                                                    <Setter Property="CornerRadius" Value="14,14,4,14"/>
                                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentGlowBrush}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="0" BlurRadius="0" Opacity="0"/>
-                                    </Border.Effect>
-                                    <TextBlock Text="{Binding Content}"
-                                               TextWrapping="Wrap"
-                                               FontSize="{DynamicResource FontSizeNormal}"
-                                               Foreground="{DynamicResource TextBrush}"
-                                               LineHeight="20"/>
+                                    <StackPanel>
+                                        <!-- Header: icon + role + timestamp -->
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <!-- ARES diamond icon -->
+                                                <Path Data="M 3,0 L 6,5 L 3,10 L 0,5 Z"
+                                                      Width="6" Height="10"
+                                                      VerticalAlignment="Center" Margin="0,0,5,0">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Setter Property="Fill" Value="{DynamicResource AccentBrush}"/>
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
+                                                <!-- User dot -->
+                                                <Ellipse Width="8" Height="8"
+                                                         VerticalAlignment="Center" Margin="0,0,5,0">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Setter Property="Fill" Value="{DynamicResource AccentBrush}"/>
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                                <!-- Role name -->
+                                                <TextBlock FontSize="10" FontFamily="Consolas"
+                                                           FontWeight="SemiBold" VerticalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="ARES"/>
+                                                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                                    <Setter Property="Text" Value="TÚ"/>
+                                                                    <Setter Property="Foreground" Value="#888888"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
+                                                       VerticalAlignment="Center" Margin="8,0,0,0"
+                                                       FontSize="9" FontFamily="Consolas" Foreground="#454545"/>
+                                        </Grid>
+                                        <!-- Content -->
+                                        <TextBlock Text="{Binding Content}" TextWrapping="Wrap"
+                                                   FontSize="{DynamicResource FontSizeNormal}"
+                                                   Foreground="{DynamicResource TextBrush}"
+                                                   LineHeight="20"/>
+                                    </StackPanel>
                                 </Border>
-
-                                <!-- Timestamp -->
-                                <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
-                                           HorizontalAlignment="{Binding IsUser, Converter={StaticResource BoolToAlignConverter}}"
-                                           FontSize="9" Foreground="#505050"
-                                           Margin="8,2,8,0"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -198,16 +255,26 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Column="0" x:Name="InputBox"
-                             Style="{StaticResource AresTextBox}"
-                             Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                             KeyDown="Input_KeyDown"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="False"
-                             MinHeight="36" MaxHeight="120"
-                             VerticalAlignment="Stretch"
-                             VerticalScrollBarVisibility="Auto"
-                             MaxLength="4000"/>
+                    <Grid Grid.Column="0">
+                        <TextBox x:Name="InputBox"
+                                 Style="{StaticResource AresTextBox}"
+                                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                                 KeyDown="Input_KeyDown"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="False"
+                                 MinHeight="38" MaxHeight="120"
+                                 VerticalAlignment="Stretch"
+                                 VerticalScrollBarVisibility="Auto"
+                                 MaxLength="4000"/>
+                        <TextBlock Text="Escribe un mensaje..."
+                                   IsHitTestVisible="False"
+                                   Margin="10,8,0,0"
+                                   VerticalAlignment="Top"
+                                   Foreground="#505050"
+                                   FontStyle="Italic"
+                                   FontSize="{DynamicResource FontSizeNormal}"
+                                   Visibility="{Binding InputText, Converter={StaticResource StringEmptyToVisibilityConverter}}"/>
+                    </Grid>
 
                     <Button Grid.Column="1" Content="→"
                             Style="{StaticResource AresButton}"

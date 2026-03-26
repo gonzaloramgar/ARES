@@ -14,7 +14,8 @@
   "CloseToTray": false,
   "ConfirmationAlertsEnabled": true,
   "VoiceEnabled": true,
-  "TtsVolume": 0.2641722,
+  "TtsVolume": 0.2062318,
+  "TtsVoiceGender": "femenino",
   "ModelKeepAliveMinutes": 5,
   "SetupCompleted": true,
   "PerformanceMode": "avanzado"

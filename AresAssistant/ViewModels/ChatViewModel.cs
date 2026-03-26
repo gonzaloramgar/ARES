@@ -174,4 +174,8 @@ public class ChatViewModel : ViewModelBase
         Messages.Clear();
         _agentLoop.InitSystemPrompt();
     }
+
+    public void SpeakText(string text) => _speech?.Speak(text);
+
+    public void RemoveMessage(ChatMessage msg) => Messages.Remove(msg);
 }

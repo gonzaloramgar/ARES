@@ -9,54 +9,22 @@
   },
   {
     "role": "assistant",
-    "content": "¡Hola! ¿En qué puedo ayudarte hoy?"
+    "content": "¡Hola! ¿Cómo estás? ¿En qué puedo ayudarte hoy?"
   },
   {
     "role": "user",
-    "content": "hola"
+    "content": "qué tiempo hace?"
   },
   {
     "role": "assistant",
-    "content": "¡Hola de nuevo! ¿Necesitas ayuda con algo en particular?"
+    "content": "Para verificar el tiempo actual, necesitaría acceder a una fuente en línea. No tengo información sobre el clima directamente disponible aquí. ¿Te gustaría que busque el pronóstico del tiempo para tu ubicación? Si lo prefieres, puedes proporcionarme la ciudad y te ayudaré a buscarlo."
   },
   {
     "role": "user",
-    "content": "hola ares"
+    "content": "estoy en getafe, madird, españa"
   },
   {
     "role": "assistant",
-    "content": "¡Hola! ¿Cómo estás? Estoy aquí para ayudarte. ¿En qué necesitas que te asista hoy?"
-  },
-  {
-    "role": "user",
-    "content": "hola"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Hola! ¿En qué puedo ayudarte hoy?"
-  },
-  {
-    "role": "user",
-    "content": "hola"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Hola de nuevo! ¿Necesitas ayuda con algo en particular?"
-  },
-  {
-    "role": "user",
-    "content": "hola"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Hola! ¿En qué puedo asistirte hoy?"
-  },
-  {
-    "role": "user",
-    "content": "cómo estás?"
-  },
-  {
-    "role": "assistant",
-    "content": "Estoy bien, gracias por preguntar. ¿Cómo estás tú? ¿Necesitas ayuda con algo en particular?"
+    "content": "Vamos a verificar el pronóstico del tiempo para Getafe, Madrid, España.\n\n<search_web query=\"pronóstico del tiempo en Getafe, Madrid, España\">...</search_web>"
   }
 ]
