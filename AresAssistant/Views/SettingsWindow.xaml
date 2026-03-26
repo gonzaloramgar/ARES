@@ -383,6 +383,21 @@
                             <Border Margin="0,8,0,0" Background="#0e0e0e" CornerRadius="6"
                                     BorderBrush="#1a1a1a" BorderThickness="1" Padding="12,10">
                                 <StackPanel>
+                                    <!-- Voice gender -->
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Género de voz" FontSize="11"
+                                                   Foreground="{DynamicResource SubtextBrush}"
+                                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedValue="{Binding TtsVoiceGender}" SelectedValuePath="Tag">
+                                            <ComboBoxItem Content="Masculino — Alvaro / Piper" Tag="masculino"/>
+                                            <ComboBoxItem Content="Femenino — Elvira neural" Tag="femenino"/>
+                                        </ComboBox>
+                                    </Grid>
                                     <!-- Volume row -->
                                     <Grid Margin="0,0,0,8">
                                         <Grid.ColumnDefinitions>

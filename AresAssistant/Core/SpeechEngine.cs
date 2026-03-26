@@ -43,10 +43,12 @@ public sealed class SpeechEngine : IDisposable
     private const string TrustedToken    = "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
     private const string EdgeOutputFormat = "audio-24khz-96kbitrate-mono-mp3";
 
-    // Primary: Alvaro – natural conversational male (Spain)
-    // Fallback: Dario – slightly different timbre
-    private const string EdgeVoicePrimary  = "es-ES-AlvaroNeural";
-    private const string EdgeVoiceFallback = "es-ES-DarioNeural";
+    // Male voices
+    private const string EdgeVoiceMalePrimary   = "es-ES-AlvaroNeural";
+    private const string EdgeVoiceMaleFallback  = "es-ES-DarioNeural";
+    // Female voices
+    private const string EdgeVoiceFemalePrimary  = "es-ES-ElviraNeural";
+    private const string EdgeVoiceFemaleFallback = "es-ES-LaiaNeural";
 
     // ─── State ────────────────────────────────────────────────────
     private volatile bool _piperReady;
@@ -56,6 +58,7 @@ public sealed class SpeechEngine : IDisposable
     private readonly object _lock = new();
     private bool _enabled;
     private float _volume = 0.5f;
+    private string _voiceGender = "masculino";
 
     /// <summary>Fired after synthesis completes, reporting which engine was used ("piper", "edge", "local").</summary>
     public event Action<string>? EngineUsed;
@@ -76,6 +79,15 @@ public sealed class SpeechEngine : IDisposable
         get => _volume;
         set => _volume = Math.Clamp(value, 0f, 1f);
     }
+
+    /// <summary>"masculino" or "femenino". Controls voice selection across all engines.</summary>
+    public string VoiceGender
+    {
+        get => _voiceGender;
+        set => _voiceGender = value ?? "masculino";
+    }
+
+    private bool IsMale => !string.Equals(_voiceGender, "femenino", StringComparison.OrdinalIgnoreCase);
 
     public SpeechEngine()
     {
@@ -121,9 +133,14 @@ public sealed class SpeechEngine : IDisposable
         if (string.IsNullOrWhiteSpace(text)) return;
 
         byte[]? audio = null;
+        var male = IsMale;
 
-        // 1️⃣ Piper — offline neural (best for privacy / no internet)
-        if (_piperReady)
+        // Select Edge voices based on gender
+        var edgePrimary  = male ? EdgeVoiceMalePrimary  : EdgeVoiceFemalePrimary;
+        var edgeFallback = male ? EdgeVoiceMaleFallback : EdgeVoiceFemaleFallback;
+
+        // 1️⃣ Piper — offline neural (male only; no quality female Spanish Piper voice available)
+        if (male && _piperReady)
         {
             try
             {
@@ -142,12 +159,12 @@ public sealed class SpeechEngine : IDisposable
         if (audio == null || audio.Length == 0)
         {
             // Kick off Piper download while Edge synthesizes
-            if (!_piperReady && !_piperDownloading)
+            if (male && !_piperReady && !_piperDownloading)
                 _ = Task.Run(DownloadPiperAsync);
 
             try
             {
-                audio = await SynthesizeEdgeAsync(text, EdgeVoicePrimary, ct);
+                audio = await SynthesizeEdgeAsync(text, edgePrimary, ct);
                 if (audio is { Length: > 0 })
                 {
                     LastEngine = "edge";
@@ -162,7 +179,7 @@ public sealed class SpeechEngine : IDisposable
             {
                 try
                 {
-                    audio = await SynthesizeEdgeAsync(text, EdgeVoiceFallback, ct);
+                    audio = await SynthesizeEdgeAsync(text, edgeFallback, ct);
                     if (audio is { Length: > 0 })
                     {
                         LastEngine = "edge-fallback";
@@ -177,12 +194,12 @@ public sealed class SpeechEngine : IDisposable
         // 3️⃣ Local WinRT — always available, basic quality
         if (audio == null || audio.Length == 0)
         {
-            if (!_piperReady && !_piperDownloading)
+            if (male && !_piperReady && !_piperDownloading)
                 _ = Task.Run(DownloadPiperAsync);
 
             try
             {
-                audio = await SynthesizeLocalAsync(text, ct);
+                audio = await SynthesizeLocalAsync(text, male, ct);
                 if (audio is { Length: > 0 })
                 {
                     LastEngine = "local";
@@ -391,19 +408,26 @@ public sealed class SpeechEngine : IDisposable
     //  3. Local WinRT — offline fallback
     // ═══════════════════════════════════════════════════════════════
 
-    private static async Task<byte[]?> SynthesizeLocalAsync(string text, CancellationToken ct)
+    private static async Task<byte[]?> SynthesizeLocalAsync(string text, bool male, CancellationToken ct)
     {
         using var synth = new SpeechSynthesizer();
         var voices = SpeechSynthesizer.AllVoices;
+        var targetGender = male
+            ? Windows.Media.SpeechSynthesis.VoiceGender.Male
+            : Windows.Media.SpeechSynthesis.VoiceGender.Female;
 
         // Prefer newer neural voices (Windows 11) over legacy robotic voices
-        var chosen =
-            voices.FirstOrDefault(v => v.DisplayName.Contains("Elvira", StringComparison.OrdinalIgnoreCase))
-            ?? voices.FirstOrDefault(v => v.DisplayName.Contains("Pablo", StringComparison.OrdinalIgnoreCase))
-            ?? voices.FirstOrDefault(v => v.DisplayName.Contains("Alvaro", StringComparison.OrdinalIgnoreCase))
-            ?? voices.FirstOrDefault(v =>
+        var chosen = male
+            ? voices.FirstOrDefault(v => v.DisplayName.Contains("Pablo", StringComparison.OrdinalIgnoreCase))
+              ?? voices.FirstOrDefault(v => v.DisplayName.Contains("Alvaro", StringComparison.OrdinalIgnoreCase))
+            : voices.FirstOrDefault(v => v.DisplayName.Contains("Elvira", StringComparison.OrdinalIgnoreCase));
+
+        chosen ??= voices.FirstOrDefault(v =>
                 v.Language.StartsWith("es-ES", StringComparison.OrdinalIgnoreCase)
-                && v.Gender == VoiceGender.Male)
+                && v.Gender == targetGender)
+            ?? voices.FirstOrDefault(v =>
+                v.Language.StartsWith("es", StringComparison.OrdinalIgnoreCase)
+                && v.Gender == targetGender)
             ?? voices.FirstOrDefault(v =>
                 v.Language.StartsWith("es", StringComparison.OrdinalIgnoreCase))
             ?? voices.FirstOrDefault(v =>

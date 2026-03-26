@@ -85,7 +85,7 @@ public partial class MainWindow : Window
 
         var agentLoop = new AgentLoop(ollamaClient, history, registry, dispatcher, config);
 
-        var speech = new SpeechEngine { Enabled = config.VoiceEnabled, Volume = config.TtsVolume };
+        var speech = new SpeechEngine { Enabled = config.VoiceEnabled, Volume = config.TtsVolume, VoiceGender = config.TtsVoiceGender };
         SpeechEngine = speech;
 
         ToolRegistry = registry;

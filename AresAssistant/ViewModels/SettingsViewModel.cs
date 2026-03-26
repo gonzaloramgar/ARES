@@ -35,6 +35,7 @@ public class SettingsViewModel : ViewModelBase
     private System.Windows.Visibility _piperButtonVisible = System.Windows.Visibility.Collapsed;
     private bool _canDownloadPiper = true;
     private float _ttsVolume;
+    private string _ttsVoiceGender;
 
     public ObservableCollection<string> AvailableModels { get; } = new();
 
@@ -74,6 +75,16 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
+    public string TtsVoiceGender
+    {
+        get => _ttsVoiceGender;
+        set
+        {
+            SetField(ref _ttsVoiceGender, value);
+            if (Views.MainWindow.SpeechEngine is { } s) s.VoiceGender = value;
+        }
+    }
+
     public SettingsViewModel(ConfigManager configManager, OllamaClient ollamaClient)
     {
         _configManager = configManager;
@@ -98,6 +109,7 @@ public class SettingsViewModel : ViewModelBase
         _modelKeepAliveMinutes = cfg.ModelKeepAliveMinutes;
         _voiceEnabled = cfg.VoiceEnabled;
         _ttsVolume = cfg.TtsVolume;
+        _ttsVoiceGender = cfg.TtsVoiceGender;
         _performanceMode = cfg.PerformanceMode;
     }
 
@@ -120,6 +132,7 @@ public class SettingsViewModel : ViewModelBase
         ModelKeepAliveMinutes = ModelKeepAliveMinutes,
         VoiceEnabled = VoiceEnabled,
         TtsVolume = TtsVolume,
+        TtsVoiceGender = TtsVoiceGender,
         PerformanceMode = PerformanceMode,
         SetupCompleted = _configManager.Config.SetupCompleted
     };
@@ -136,6 +149,7 @@ public class SettingsViewModel : ViewModelBase
         {
             speech.Enabled = config.VoiceEnabled;
             speech.Volume = config.TtsVolume;
+            speech.VoiceGender = config.TtsVoiceGender;
         }
     }
 
