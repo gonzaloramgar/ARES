@@ -63,6 +63,25 @@ public partial class SettingsWindow : Window
     {
         var speech = MainWindow.SpeechEngine;
         if (speech == null) return;
+
+        _vm.TtsEngineStatus = "Sintetizando...";
+
+        void OnEngine(string engine)
+        {
+            speech.EngineUsed -= OnEngine;
+            Dispatcher.InvokeAsync(() =>
+            {
+                var label = engine switch
+                {
+                    "piper" => "Motor: Piper neural offline ✓",
+                    "edge"  => "Motor: Edge online neural ✓",
+                    "local" => "⚠ Motor: WinRT local (Edge falló)",
+                    _       => $"Motor: {engine}"
+                };
+                _vm.TtsEngineStatus = label;
+            });
+        }
+        speech.EngineUsed += OnEngine;
         speech.Speak("Hola, soy ARES. La voz del asistente está funcionando correctamente.");
     }
 
@@ -99,13 +118,12 @@ public partial class SettingsWindow : Window
             MainWindow.ToolRegistry.LoadFromJson("data/tools.json");
 
             Title = "ARES — Ajustes";
-            MessageBox.Show($"Escaneo completado. {tools.Count} herramientas cargadas.", "ARES");
+            AresMessageBox.Show($"Escaneo completado. {tools.Count} herramientas cargadas.", "ARES");
         }
         catch (Exception ex)
         {
             Title = "ARES — Ajustes";
-            MessageBox.Show($"Error durante el escaneo:\n{ex.Message}", "ARES — Error",
-                MessageBoxButton.OK, MessageBoxImage.Warning);
+            AresMessageBox.Show($"Error durante el escaneo:\n{ex.Message}", "ARES — Error");
         }
     }
 
@@ -132,9 +150,9 @@ public partial class SettingsWindow : Window
 
             Close();
 
-            MessageBox.Show(
+            AresMessageBox.Show(
                 "Todos los datos han sido eliminados.\nLa aplicación se reiniciará.",
-                "ARES — Datos eliminados", MessageBoxButton.OK, MessageBoxImage.Information);
+                "ARES — Datos eliminados");
 
             // Restart the app
             var exePath = Environment.ProcessPath;
@@ -146,8 +164,7 @@ public partial class SettingsWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error al eliminar datos:\n{ex.Message}", "ARES — Error",
-                MessageBoxButton.OK, MessageBoxImage.Warning);
+            AresMessageBox.Show($"Error al eliminar datos:\n{ex.Message}", "ARES — Error");
         }
     }
 }

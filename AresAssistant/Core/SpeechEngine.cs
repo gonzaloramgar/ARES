@@ -25,17 +25,23 @@ public sealed class SpeechEngine : IDisposable
     private const string PiperZipUrl    =
         $"https://github.com/rhasspy/piper/releases/download/{PiperRelease}/piper_windows_amd64.zip";
 
-    // es_ES-davefx-medium: Spain Spanish, male, natural cadence — sounds more natural than es_MX for Spain users
-    private const string PiperVoiceName      = "es_ES-davefx-medium";
-    private const string PiperVoiceBaseUrl   =
+    // Male: es_ES-davefx-medium — Spain Spanish, natural cadence
+    private const string PiperVoiceMaleName    = "es_ES-davefx-medium";
+    private const string PiperVoiceMaleBaseUrl =
         "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/es/es_ES/davefx/medium/";
-    private static readonly string PiperVoiceUrl       = PiperVoiceBaseUrl + PiperVoiceName + ".onnx";
-    private static readonly string PiperVoiceConfigUrl = PiperVoiceUrl + ".json";
 
-    private static readonly string TtsDir    = Path.Combine("data", "tts");
-    private static readonly string PiperExe  = Path.Combine(TtsDir, "piper", "piper.exe");
-    private static readonly string VoiceModel  = Path.Combine(TtsDir, $"{PiperVoiceName}.onnx");
-    private static readonly string VoiceConfig = VoiceModel + ".json";
+    // Female: es_ES-sharvard-medium — Spain Spanish female, same quality tier as davefx
+    private const string PiperVoiceFemaleName    = "es_ES-sharvard-medium";
+    private const string PiperVoiceFemaleBaseUrl =
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/es/es_ES/sharvard/medium/";
+
+    private static readonly string TtsDir   = Path.Combine("data", "tts");
+    private static readonly string PiperExe = Path.Combine(TtsDir, "piper", "piper.exe");
+
+    private static readonly string VoiceModelMale    = Path.Combine(TtsDir, $"{PiperVoiceMaleName}.onnx");
+    private static readonly string VoiceConfigMale   = VoiceModelMale + ".json";
+    private static readonly string VoiceModelFemale  = Path.Combine(TtsDir, $"{PiperVoiceFemaleName}.onnx");
+    private static readonly string VoiceConfigFemale = VoiceModelFemale + ".json";
 
     // ─── Edge TTS ─────────────────────────────────────────────────
     private const string EdgeEndpoint =
@@ -46,13 +52,15 @@ public sealed class SpeechEngine : IDisposable
     // Male voices
     private const string EdgeVoiceMalePrimary   = "es-ES-AlvaroNeural";
     private const string EdgeVoiceMaleFallback  = "es-ES-DarioNeural";
-    // Female voices
-    private const string EdgeVoiceFemalePrimary  = "es-ES-ElviraNeural";
-    private const string EdgeVoiceFemaleFallback = "es-ES-LaiaNeural";
+    // Female voices — DaliaNeural (MX) is the most reliable female Spanish voice on Edge TTS
+    private const string EdgeVoiceFemalePrimary  = "es-MX-DaliaNeural";
+    private const string EdgeVoiceFemaleFallback = "es-ES-ElviraNeural";
 
     // ─── State ────────────────────────────────────────────────────
-    private volatile bool _piperReady;
-    private volatile bool _piperDownloading;
+    private volatile bool _piperReadyMale;
+    private volatile bool _piperReadyFemale;
+    private volatile bool _piperDownloadingMale;
+    private volatile bool _piperDownloadingFemale;
     private WaveOutEvent? _player;
     private CancellationTokenSource? _cts;
     private readonly object _lock = new();
@@ -63,9 +71,9 @@ public sealed class SpeechEngine : IDisposable
     /// <summary>Fired after synthesis completes, reporting which engine was used ("piper", "edge", "local").</summary>
     public event Action<string>? EngineUsed;
 
-    public string LastEngine      { get; private set; } = "";
-    public bool   PiperReady      => _piperReady;
-    public bool   PiperDownloading => _piperDownloading;
+    public string LastEngine       { get; private set; } = "";
+    public bool   PiperReady       => IsMale ? _piperReadyMale       : _piperReadyFemale;
+    public bool   PiperDownloading => IsMale ? _piperDownloadingMale : _piperDownloadingFemale;
 
     public bool Enabled
     {
@@ -87,11 +95,33 @@ public sealed class SpeechEngine : IDisposable
         set => _voiceGender = value ?? "masculino";
     }
 
+    /// <summary>When true, skip the low-quality Local WinRT fallback — prefer silence over bad voice.</summary>
+    public bool SkipLocalFallback { get; set; }
+
     private bool IsMale => !string.Equals(_voiceGender, "femenino", StringComparison.OrdinalIgnoreCase);
 
     public SpeechEngine()
     {
-        _piperReady = File.Exists(PiperExe) && File.Exists(VoiceModel);
+        _piperReadyMale   = File.Exists(PiperExe) && File.Exists(VoiceModelMale);
+        _piperReadyFemale = File.Exists(PiperExe) && File.Exists(VoiceModelFemale);
+    }
+
+    /// <summary>
+    /// Pre-warm the Edge TTS pipeline by doing a real (tiny) synthesis.
+    /// This warms DNS, TLS, and the server-side voice model so the first
+    /// real Speak() gets audio from Edge instead of falling to Local WinRT.
+    /// Call once after construction — fire-and-forget is fine.
+    /// </summary>
+    public async Task WarmUpAsync()
+    {
+        try
+        {
+            var voice = IsMale ? EdgeVoiceMalePrimary : EdgeVoiceFemalePrimary;
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            // Synthesize a tiny phrase to truly warm the full pipeline
+            await SynthesizeEdgeAsync(".", voice, cts.Token);
+        }
+        catch { /* best-effort warm-up */ }
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -133,18 +163,23 @@ public sealed class SpeechEngine : IDisposable
         if (string.IsNullOrWhiteSpace(text)) return;
 
         byte[]? audio = null;
-        var male = IsMale;
+        var male         = IsMale;
+        var piperReady   = male ? _piperReadyMale       : _piperReadyFemale;
+        var piperDling   = male ? _piperDownloadingMale : _piperDownloadingFemale;
+        var piperModel   = male ? VoiceModelMale        : VoiceModelFemale;
 
-        // Select Edge voices based on gender
+        // Select Edge voices and prosody based on gender
         var edgePrimary  = male ? EdgeVoiceMalePrimary  : EdgeVoiceFemalePrimary;
         var edgeFallback = male ? EdgeVoiceMaleFallback : EdgeVoiceFemaleFallback;
+        var edgePitch    = male ? "-3%" : "+0%";  // male: slightly lower; female: natural pitch
+        var chatStyle    = male;                   // only AlvaroNeural supports express-as style='chat'
 
-        // 1️⃣ Piper — offline neural (male only; no quality female Spanish Piper voice available)
-        if (male && _piperReady)
+        // 1️⃣ Piper — offline neural
+        if (piperReady)
         {
             try
             {
-                audio = await SynthesizePiperAsync(text, ct);
+                audio = await SynthesizePiperAsync(text, piperModel, ct);
                 if (audio is { Length: > 0 })
                 {
                     LastEngine = "piper";
@@ -159,12 +194,12 @@ public sealed class SpeechEngine : IDisposable
         if (audio == null || audio.Length == 0)
         {
             // Kick off Piper download while Edge synthesizes
-            if (male && !_piperReady && !_piperDownloading)
-                _ = Task.Run(DownloadPiperAsync);
+            if (!piperReady && !piperDling)
+                _ = Task.Run(() => DownloadPiperCoreAsync(male), CancellationToken.None);
 
             try
             {
-                audio = await SynthesizeEdgeAsync(text, edgePrimary, ct);
+                audio = await SynthesizeEdgeAsync(text, edgePrimary, ct, edgePitch, chatStyle);
                 if (audio is { Length: > 0 })
                 {
                     LastEngine = "edge";
@@ -179,7 +214,7 @@ public sealed class SpeechEngine : IDisposable
             {
                 try
                 {
-                    audio = await SynthesizeEdgeAsync(text, edgeFallback, ct);
+                    audio = await SynthesizeEdgeAsync(text, edgeFallback, ct, edgePitch, chatStyle);
                     if (audio is { Length: > 0 })
                     {
                         LastEngine = "edge-fallback";
@@ -191,15 +226,19 @@ public sealed class SpeechEngine : IDisposable
             }
         }
 
-        // 3️⃣ Local WinRT — always available, basic quality
-        if (audio == null || audio.Length == 0)
+        // 3️⃣ Local fallback (skipped when SkipLocalFallback is set)
+        //    Male   → WinRT OneCore (better neural voices on Win11)
+        //    Female → SAPI System.Speech (SelectVoiceByHints forces female reliably)
+        if ((audio == null || audio.Length == 0) && !SkipLocalFallback)
         {
-            if (male && !_piperReady && !_piperDownloading)
-                _ = Task.Run(DownloadPiperAsync);
+            if (!piperReady && !piperDling)
+                _ = Task.Run(() => DownloadPiperCoreAsync(male), CancellationToken.None);
 
             try
             {
-                audio = await SynthesizeLocalAsync(text, male, ct);
+                audio = male
+                    ? await SynthesizeLocalAsync(text, true, ct)
+                    : await SynthesizeSapiAsync(text, ct);
                 if (audio is { Length: > 0 })
                 {
                     LastEngine = "local";
@@ -218,7 +257,7 @@ public sealed class SpeechEngine : IDisposable
     //  1. Piper TTS
     // ═══════════════════════════════════════════════════════════════
 
-    private static async Task<byte[]?> SynthesizePiperAsync(string text, CancellationToken ct)
+    private static async Task<byte[]?> SynthesizePiperAsync(string text, string voiceModel, CancellationToken ct)
     {
         var wavFile = Path.Combine(Path.GetTempPath(), $"ares_tts_{Guid.NewGuid():N}.wav");
         try
@@ -227,7 +266,7 @@ public sealed class SpeechEngine : IDisposable
             proc.StartInfo = new ProcessStartInfo
             {
                 FileName  = PiperExe,
-                Arguments = $"--model \"{VoiceModel}\" --output_file \"{wavFile}\" --length_scale 1.05",
+                Arguments = $"--model \"{voiceModel}\" --output_file \"{wavFile}\" --length_scale 1.05",
                 RedirectStandardInput  = true,
                 RedirectStandardError  = true,
                 UseShellExecute  = false,
@@ -254,10 +293,27 @@ public sealed class SpeechEngine : IDisposable
     //  Piper auto-download
     // ═══════════════════════════════════════════════════════════════
 
-    public async Task DownloadPiperAsync()
+    /// <summary>Downloads Piper binary + voice model for the current gender setting.</summary>
+    public async Task DownloadPiperAsync() => await DownloadPiperCoreAsync(IsMale);
+
+    private async Task DownloadPiperCoreAsync(bool male)
     {
-        if (_piperReady || _piperDownloading) return;
-        _piperDownloading = true;
+        if (male)
+        {
+            if (_piperReadyMale || _piperDownloadingMale) return;
+            _piperDownloadingMale = true;
+        }
+        else
+        {
+            if (_piperReadyFemale || _piperDownloadingFemale) return;
+            _piperDownloadingFemale = true;
+        }
+
+        var voiceModel    = male ? VoiceModelMale   : VoiceModelFemale;
+        var voiceConfig   = male ? VoiceConfigMale  : VoiceConfigFemale;
+        var voiceModelUrl = (male ? PiperVoiceMaleBaseUrl + PiperVoiceMaleName
+                                  : PiperVoiceFemaleBaseUrl + PiperVoiceFemaleName) + ".onnx";
+        var voiceConfigUrl = voiceModelUrl + ".json";
 
         try
         {
@@ -277,31 +333,37 @@ public sealed class SpeechEngine : IDisposable
                 try { File.Delete(zipPath); } catch { }
             }
 
-            if (!File.Exists(VoiceModel))
+            if (!File.Exists(voiceModel))
             {
-                using var resp = await http.GetAsync(PiperVoiceUrl, HttpCompletionOption.ResponseHeadersRead);
+                using var resp = await http.GetAsync(voiceModelUrl, HttpCompletionOption.ResponseHeadersRead);
                 resp.EnsureSuccessStatusCode();
-                using var fs = File.Create(VoiceModel);
+                using var fs = File.Create(voiceModel);
                 await resp.Content.CopyToAsync(fs);
             }
 
-            if (!File.Exists(VoiceConfig))
+            if (!File.Exists(voiceConfig))
             {
-                var bytes = await http.GetByteArrayAsync(PiperVoiceConfigUrl);
-                await File.WriteAllBytesAsync(VoiceConfig, bytes);
+                var bytes = await http.GetByteArrayAsync(voiceConfigUrl);
+                await File.WriteAllBytesAsync(voiceConfig, bytes);
             }
 
-            _piperReady = File.Exists(PiperExe) && File.Exists(VoiceModel);
+            var ready = File.Exists(PiperExe) && File.Exists(voiceModel);
+            if (male) _piperReadyMale   = ready;
+            else      _piperReadyFemale = ready;
         }
         catch { /* retry on next speak */ }
-        finally { _piperDownloading = false; }
+        finally
+        {
+            if (male) _piperDownloadingMale   = false;
+            else      _piperDownloadingFemale = false;
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════
     //  2. Edge TTS — online neural via WebSocket
     // ═══════════════════════════════════════════════════════════════
 
-    private static async Task<byte[]?> SynthesizeEdgeAsync(string text, string voice, CancellationToken ct)
+    private static async Task<byte[]?> SynthesizeEdgeAsync(string text, string voice, CancellationToken ct, string pitch = "-3%", bool useChatStyle = true)
     {
         var connId    = Guid.NewGuid().ToString("N").ToLower();
         var requestId = Guid.NewGuid().ToString("N").ToLower();
@@ -329,19 +391,28 @@ public sealed class SpeechEngine : IDisposable
             "}}}}";
         await WsSendAsync(ws, configMsg, timeout.Token);
 
-        // SSML with express-as chat style + prosody for natural, conversational delivery
         var escaped = System.Security.SecurityElement.Escape(text);
-        var ssml =
-            $"<speak version='1.0' " +
-            $"xmlns='http://www.w3.org/2001/10/synthesis' " +
-            $"xmlns:mstts='https://www.w3.org/2001/mstts' " +
-            $"xml:lang='es-ES'>" +
-            $"<voice name='{voice}'>" +
-            $"<mstts:express-as style='chat'>" +
-            $"<prosody rate='0.92' pitch='-3%'>{escaped}</prosody>" +
-            $"</mstts:express-as>" +
-            $"</voice>" +
-            $"</speak>";
+        string ssml;
+        if (useChatStyle)
+        {
+            // AlvaroNeural supports express-as style='chat' + prosody
+            ssml =
+                $"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' " +
+                $"xmlns:mstts='https://www.w3.org/2001/mstts' xml:lang='es-ES'>" +
+                $"<voice name='{voice}'>" +
+                $"<mstts:express-as style='chat'>" +
+                $"<prosody rate='0.92' pitch='{pitch}'>{escaped}</prosody>" +
+                $"</mstts:express-as></voice></speak>";
+        }
+        else
+        {
+            // ElviraNeural / DaliaNeural: bare SSML — no express-as, no prosody wrappers
+            // Any extra markup on these voices silently returns empty audio
+            ssml =
+                $"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='es-ES'>" +
+                $"<voice name='{voice}'>{escaped}</voice>" +
+                $"</speak>";
+        }
 
         var ssmlMsg =
             $"X-RequestId:{requestId}\r\n" +
@@ -452,6 +523,38 @@ public sealed class SpeechEngine : IDisposable
     }
 
     // ═══════════════════════════════════════════════════════════════
+    //  4. SAPI (System.Speech) — reliable female voice via gender hint
+    // ═══════════════════════════════════════════════════════════════
+
+    private static async Task<byte[]?> SynthesizeSapiAsync(string text, CancellationToken ct)
+    {
+        return await Task.Run(() =>
+        {
+            ct.ThrowIfCancellationRequested();
+            using var synth = new System.Speech.Synthesis.SpeechSynthesizer();
+
+            // Try Spanish female first, then any female, then any voice
+            try
+            {
+                synth.SelectVoiceByHints(
+                    System.Speech.Synthesis.VoiceGender.Female,
+                    System.Speech.Synthesis.VoiceAge.Adult, 0,
+                    new System.Globalization.CultureInfo("es"));
+            }
+            catch
+            {
+                try { synth.SelectVoiceByHints(System.Speech.Synthesis.VoiceGender.Female); }
+                catch { /* use system default */ }
+            }
+
+            using var ms = new MemoryStream();
+            synth.SetOutputToWaveStream(ms);
+            synth.Speak(text);
+            return ms.ToArray();
+        }, ct);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     //  Playback
     // ═══════════════════════════════════════════════════════════════
 
@@ -465,15 +568,15 @@ public sealed class SpeechEngine : IDisposable
         {
             reader = new StreamMediaFoundationReader(ms);
 
-            // Prepend 250 ms of silence before the speech so the audio device has time
+            // Prepend 300 ms of silence before the speech so the audio device has time
             // to fully initialize before the first syllable. Without this the OS audio
             // engine eats the first ~100-200 ms while it opens the device.
             var withSilence = new OffsetSampleProvider(reader.ToSampleProvider())
             {
-                DelayBy = TimeSpan.FromMilliseconds(250)
+                DelayBy = TimeSpan.FromMilliseconds(300)
             };
 
-            player = new WaveOutEvent { DesiredLatency = 300, NumberOfBuffers = 3, Volume = _volume };
+            player = new WaveOutEvent { DesiredLatency = 400, NumberOfBuffers = 4, Volume = _volume };
             player.Init(withSilence);
 
             lock (_lock)
@@ -514,6 +617,21 @@ public sealed class SpeechEngine : IDisposable
         text = Regex.Replace(text, @"```[\s\S]*?```", "código omitido");
         text = Regex.Replace(text, @"`[^`\n]+`", "");
 
+        // Remove JSON fragments  { ... }
+        text = Regex.Replace(text, @"\{[^}]{2,}\}", "");
+
+        // Remove Windows file paths  (C:\..., D:\...)
+        text = Regex.Replace(text, @"[A-Z]:\\[\w\\.\-\s]+", "");
+
+        // Remove Unix-style paths  (/usr/bin/...)
+        text = Regex.Replace(text, @"(?<!\w)/(?:usr|home|etc|tmp|var|opt|bin|mnt|dev)[\w/.\-]*", "");
+
+        // Remove tool names the LLM might echo (open_app, search_web, etc.)
+        text = Regex.Replace(text, @"\b\w+_\w+(?:_\w+)*\b", "");
+
+        // Remove .exe / .dll / .msi / .bat references
+        text = Regex.Replace(text, @"\b\S+\.(?:exe|dll|msi|bat|cmd|ps1|sh)\b", "", RegexOptions.IgnoreCase);
+
         // Remove markdown formatting
         text = text.Replace("**", "").Replace("__", "").Replace("*", "").Replace("_", " ");
         text = Regex.Replace(text, @"^#{1,6}\s+", "", RegexOptions.Multiline);
@@ -530,6 +648,16 @@ public sealed class SpeechEngine : IDisposable
 
         // Remove emojis and special Unicode symbols
         text = Regex.Replace(text, @"[\p{So}\p{Sm}\p{Sk}\p{Sc}]", "");
+
+        // Remove angle brackets and their content (HTML/XML tags)
+        text = Regex.Replace(text, @"<[^>]+>", "");
+
+        // Remove parenthetical technical content (paths, params inside parens)
+        text = Regex.Replace(text, @"\([^)]*[\\/:.][^)]*\)", "");
+
+        // Replace repeated punctuation (... --- ===)
+        text = Regex.Replace(text, @"\.{2,}", ".");
+        text = Regex.Replace(text, @"[-=]{2,}", " ");
 
         // Collapse whitespace
         text = Regex.Replace(text, @"\s+", " ").Trim();

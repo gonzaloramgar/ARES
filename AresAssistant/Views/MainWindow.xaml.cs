@@ -68,6 +68,8 @@ public partial class MainWindow : Window
         registry.Register(new DeleteFolderTool());
         registry.Register(new RecycleBinTool());
         registry.Register(new RememberAppTool(registry));
+        registry.Register(new LocationTool());
+        registry.Register(new WeatherTool());
 
         // Load auto-generated tools from scan (also loads data/custom-apps.json)
         registry.LoadFromJson("data/tools.json");
@@ -86,6 +88,7 @@ public partial class MainWindow : Window
         var agentLoop = new AgentLoop(ollamaClient, history, registry, dispatcher, config);
 
         var speech = new SpeechEngine { Enabled = config.VoiceEnabled, Volume = config.TtsVolume, VoiceGender = config.TtsVoiceGender };
+        _ = speech.WarmUpAsync();  // Pre-warm Edge TTS so first response doesn't fall to local voice
         SpeechEngine = speech;
 
         ToolRegistry = registry;

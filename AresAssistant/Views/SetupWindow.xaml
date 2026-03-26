@@ -54,6 +54,8 @@
                          Fill="#333333" Opacity="0.5"/>
                 <Ellipse x:Name="Dot4" Width="8" Height="8" Margin="4,0"
                          Fill="#333333" Opacity="0.5"/>
+                <Ellipse x:Name="Dot5" Width="8" Height="8" Margin="4,0"
+                         Fill="#333333" Opacity="0.5"/>
             </StackPanel>
 
             <!-- ══════════  PAGE CONTAINER  ══════════ -->
@@ -424,8 +426,8 @@
                     </ScrollViewer>
                 </Grid>
 
-                <!-- ────── PAGE 4: Sistema ────── -->
-                <Grid x:Name="Page4" Visibility="Collapsed">
+                <!-- ────── PAGE 5: Sistema ────── -->
+                <Grid x:Name="Page5" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
                             <TextBlock Text="🖥  SISTEMA" FontSize="20" FontWeight="Bold"
@@ -486,85 +488,6 @@
                                               Content="Minimizar a la bandeja al cerrar" IsChecked="True" Margin="0,8,0,0"/>
                                     <CheckBox x:Name="ChkConfirmation" Style="{StaticResource AresCheckBox}"
                                               Content="Pedir confirmación en acciones peligrosas" IsChecked="True" Margin="0,8,0,0"/>
-                                    <CheckBox x:Name="ChkVoice" Style="{StaticResource AresCheckBox}"
-                                              Content="Voz del asistente (leer respuestas en voz alta)" Margin="0,8,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Voice settings (visible when voice enabled) -->
-                            <Border x:Name="VoiceSettingsPanel" Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14"
-                                    Visibility="Collapsed">
-                                <StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                        <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
-                                                   Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                        <TextBlock Text="VOZ" FontFamily="Consolas" FontSize="10"
-                                                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
-                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
-                                    </StackPanel>
-
-                                    <!-- Gender cards -->
-                                    <TextBlock Text="Género de voz" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,8"/>
-                                    <UniformGrid Columns="2" Margin="0,0,0,14">
-                                        <Border x:Name="CardMasculino" Tag="masculino"
-                                                Background="#161616" CornerRadius="8"
-                                                BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5"
-                                                Margin="0,0,5,0" Padding="14,10" Cursor="Hand"
-                                                MouseLeftButtonDown="VoiceGender_Click">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="🗣" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                                <TextBlock Text="Masculino" FontFamily="Consolas" FontSize="11" FontWeight="Bold"
-                                                           Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="Alvaro / Piper" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
-                                                           FontFamily="Consolas" Margin="0,3,0,0"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border x:Name="CardFemenino" Tag="femenino"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
-                                                Margin="5,0,0,0" Padding="14,10" Cursor="Hand"
-                                                MouseLeftButtonDown="VoiceGender_Click">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="🗣" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                                <TextBlock Text="Femenino" FontFamily="Consolas" FontSize="11" FontWeight="Bold"
-                                                           Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="Elvira neural" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
-                                                           FontFamily="Consolas" Margin="0,3,0,0"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </UniformGrid>
-
-                                    <!-- Volume slider -->
-                                    <Grid Margin="0,0,0,12">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="Volumen" FontSize="11"
-                                                   Foreground="{DynamicResource SubtextBrush}"
-                                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                        <Slider x:Name="SetupVolumeSlider" Grid.Column="1"
-                                                Minimum="0" Maximum="1" SmallChange="0.05" Value="0.5"
-                                                VerticalAlignment="Center"
-                                                ValueChanged="SetupVolume_ValueChanged"/>
-                                        <TextBlock x:Name="SetupVolumeLabel" Grid.Column="2"
-                                                   Text="50%" FontSize="11" FontFamily="Consolas"
-                                                   Foreground="{DynamicResource AccentBrush}"
-                                                   VerticalAlignment="Center" Margin="8,0,0,0" Width="36"
-                                                   TextAlignment="Right"/>
-                                    </Grid>
-
-                                    <!-- Test button -->
-                                    <Button Content="▶ Probar voz"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="16,0"
-                                            HorizontalAlignment="Left" Cursor="Hand"
-                                            Click="SetupTestVoice_Click"/>
                                 </StackPanel>
                             </Border>
 
@@ -581,6 +504,139 @@
                                         <ComboBoxItem Content="10 minutos" Tag="10"/>
                                         <ComboBoxItem Content="30 minutos" Tag="30"/>
                                     </ComboBox>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- ────── PAGE 4: Voz ────── -->
+                <Grid x:Name="Page4" Visibility="Collapsed">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
+                            <TextBlock Text="🔊  VOZ DEL ASISTENTE" FontSize="20" FontWeight="Bold"
+                                       Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
+                                       FontFamily="Consolas" Margin="0,0,0,6"/>
+                            <TextBlock Text="Configura cómo habla tu asistente"
+                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontFamily="Consolas" Margin="0,0,0,22"/>
+
+                            <!-- Enable voice -->
+                            <Border Background="#0b0b0b" CornerRadius="10"
+                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
+                                                   Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="ACTIVAR VOZ" FontFamily="Consolas" FontSize="10"
+                                                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="ChkVoice" Style="{StaticResource AresCheckBox}"
+                                              Content="Leer respuestas en voz alta" IsChecked="False"/>
+                                    <TextBlock Text="ARES leerá sus respuestas usando síntesis de voz neuronal"
+                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Gender cards -->
+                            <Border Background="#0b0b0b" CornerRadius="10"
+                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
+                                                   Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="GÉNERO DE VOZ" FontFamily="Consolas" FontSize="10"
+                                                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <UniformGrid Columns="2">
+                                        <Border x:Name="CardMasculino" Tag="masculino"
+                                                Background="#161616" CornerRadius="8"
+                                                BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5"
+                                                Margin="0,0,5,0" Padding="14,12" Cursor="Hand"
+                                                MouseLeftButtonDown="VoiceGender_Click">
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <TextBlock Text="🗣" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <TextBlock Text="Masculino" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
+                                                           Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Alvaro / Piper neural" FontSize="9"
+                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           FontFamily="Consolas" Margin="0,4,0,0"/>
+                                                <TextBlock Text="Voz offline disponible" FontSize="8"
+                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           FontFamily="Consolas" Margin="0,3,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border x:Name="CardFemenino" Tag="femenino"
+                                                Background="#111111" CornerRadius="8"
+                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Margin="5,0,0,0" Padding="14,12" Cursor="Hand"
+                                                MouseLeftButtonDown="VoiceGender_Click">
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <TextBlock Text="🗣" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <TextBlock Text="Femenino" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
+                                                           Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Elvira neural" FontSize="9"
+                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           FontFamily="Consolas" Margin="0,4,0,0"/>
+                                                <TextBlock Text="Requiere conexión" FontSize="8"
+                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           FontFamily="Consolas" Margin="0,3,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Volume -->
+                            <Border Background="#0b0b0b" CornerRadius="10"
+                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
+                                                   Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="VOLUMEN" FontFamily="Consolas" FontSize="10"
+                                                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="SetupVolumeSlider" Grid.Column="0"
+                                                Minimum="0" Maximum="1" SmallChange="0.05" Value="0.5"
+                                                VerticalAlignment="Center"
+                                                ValueChanged="SetupVolume_ValueChanged"/>
+                                        <TextBlock x:Name="SetupVolumeLabel" Grid.Column="1"
+                                                   Text="50%" FontSize="12" FontFamily="Consolas"
+                                                   Foreground="{DynamicResource AccentBrush}"
+                                                   VerticalAlignment="Center" Margin="12,0,0,0" Width="40"
+                                                   TextAlignment="Right" FontWeight="Bold"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Test voice -->
+                            <Border Background="#0b0b0b" CornerRadius="10"
+                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
+                                                   Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="PRUEBA DE VOZ" FontFamily="Consolas" FontSize="10"
+                                                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Escucha cómo suena tu asistente con la configuración actual"
+                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,0,0,12"/>
+                                    <Button x:Name="SetupTestVoice" Content="▶  Probar voz"
+                                            Style="{StaticResource GhostButton}"
+                                            Height="34" Padding="20,0"
+                                            HorizontalAlignment="Left" Cursor="Hand"
+                                            FontFamily="Consolas" FontSize="12"
+                                            Click="SetupTestVoice_Click"/>
                                 </StackPanel>
                             </Border>
                         </StackPanel>

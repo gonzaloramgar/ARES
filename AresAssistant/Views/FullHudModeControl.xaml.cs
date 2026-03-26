@@ -52,8 +52,8 @@ public partial class FullHudModeControl : UserControl
 
     private void ClearChat_Click(object sender, RoutedEventArgs e)
     {
-        if (MessageBox.Show("¿Deseas limpiar el historial del chat?", "ARES",
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        if (AresMessageBox.Show("¿Deseas limpiar el historial del chat?", "ARES",
+                MessageBoxButton.YesNo) == MessageBoxResult.Yes)
         {
             Vm.ClearHistory();
         }
@@ -70,7 +70,7 @@ public partial class FullHudModeControl : UserControl
         {
             var lines = Vm.Messages.Select(m => $"[{m.Role.ToUpper()}]: {m.Content}");
             System.IO.File.WriteAllLines(dlg.FileName, lines);
-            MessageBox.Show("Chat exportado correctamente.", "ARES");
+            AresMessageBox.Show("Chat exportado correctamente.", "ARES");
         }
     }
 
@@ -93,5 +93,23 @@ public partial class FullHudModeControl : UserControl
     {
         if (sender is FrameworkElement el)
             AnimationHelper.FadeSlideIn(el, fromY: AnimationHelper.SlideDistanceSmall);
+    }
+
+    private void CopyMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Clipboard.SetText(msg.Content);
+    }
+
+    private void SpeakMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Vm.SpeakText(msg.Content);
+    }
+
+    private void DeleteMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Vm.RemoveMessage(msg);
     }
 }

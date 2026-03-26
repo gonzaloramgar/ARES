@@ -35,9 +35,9 @@ public partial class SplashWindow : Window
             catch (Exception ex2)
             {
                 App.WriteCrash("OpenMainWindow", ex2);
-                System.Windows.MessageBox.Show(
+                AresMessageBox.Show(
                     $"Error crítico al iniciar ARES:\n\n{ex2.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
-                    "ARES - Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    "ARES — Error");
                 Application.Current.Shutdown(1);
             }
         }

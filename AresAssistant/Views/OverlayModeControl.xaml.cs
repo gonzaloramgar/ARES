@@ -69,4 +69,22 @@ public partial class OverlayModeControl : UserControl
         if (sender is FrameworkElement el)
             AnimationHelper.FadeSlideIn(el, fromY: AnimationHelper.SlideDistanceSmall);
     }
+
+    private void CopyMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Clipboard.SetText(msg.Content);
+    }
+
+    private void SpeakMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Vm.SpeakText(msg.Content);
+    }
+
+    private void DeleteMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem mi && mi.DataContext is ChatMessage msg)
+            Vm.RemoveMessage(msg);
+    }
 }

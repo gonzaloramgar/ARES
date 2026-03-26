@@ -96,6 +96,8 @@ public class AgentLoop
         sb.AppendLine("  - ventanas               → usa list_open_windows, minimize_window, maximize_window");
         sb.AppendLine("  - portapapeles            → usa clipboard_read, clipboard_write");
         sb.AppendLine("  - recordar app/juego      → usa remember_app (guarda nombre + ruta para siempre)");
+        sb.AppendLine("  - ubicación/localización  → usa get_location (detecta ciudad por IP, no necesita GPS)");
+        sb.AppendLine("  - tiempo/clima/meteorología→ usa get_location PRIMERO y luego get_weather con las coordenadas");
         sb.AppendLine("Usa la herramienta PRIMERO. Explica brevemente lo que hiciste DESPUÉS.");
         sb.AppendLine("NUNCA digas que una aplicación no existe sin haber llamado a open_app. Siempre intenta abrir con la herramienta.");
         sb.AppendLine("Aunque antes haya fallado, VUELVE A INTENTARLO con la herramienta porque las apps se escanean de nuevo cada inicio.");

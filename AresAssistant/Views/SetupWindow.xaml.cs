@@ -12,7 +12,7 @@ namespace AresAssistant.Views;
 
 public partial class SetupWindow : Window
 {
-    private const int TotalPages = 5;
+    private const int TotalPages = 6;
     private int _currentPage;
 
     private string _selectedColor = "#ff2222";
@@ -25,6 +25,7 @@ public partial class SetupWindow : Window
     private Border[] _voiceGenderCards = [];
     private Grid[] _pages = [];
     private Ellipse[] _dots = [];
+    private SpeechEngine? _testSpeech;
 
     public SetupWindow()
     {
@@ -34,18 +35,14 @@ public partial class SetupWindow : Window
             _personalityCards = [CardFormal, CardCasual, CardSarcastico, CardTecnico];
             _perfModeCards = [CardLigero, CardAvanzado];
             _voiceGenderCards = [CardMasculino, CardFemenino];
-            _pages = [Page0, Page1, Page2, Page3, Page4];
-            _dots = [Dot0, Dot1, Dot2, Dot3, Dot4];
+            _pages = [Page0, Page1, Page2, Page3, Page4, Page5];
+            _dots = [Dot0, Dot1, Dot2, Dot3, Dot4, Dot5];
 
             UpdateColorPreview(_selectedColor);
             HighlightPersonalityCard(_selectedPersonality);
             HighlightPerfModeCard(_selectedPerfMode);
             HighlightVoiceGenderCard(_selectedVoiceGender);
             UpdateNavigation();
-
-            // Wire voice checkbox to show/hide voice settings
-            ChkVoice.Checked += (_, _) => VoiceSettingsPanel.Visibility = Visibility.Visible;
-            ChkVoice.Unchecked += (_, _) => VoiceSettingsPanel.Visibility = Visibility.Collapsed;
 
             // Staggered entrance for the first page content
             await Task.Delay(300);
@@ -83,6 +80,14 @@ public partial class SetupWindow : Window
 
         _currentPage = target;
         UpdateNavigation();
+
+        // Pre-warm Edge TTS when entering the voice page so the first test
+        // doesn't fall through to the low-quality Local WinRT voice.
+        if (target == 4 && _testSpeech == null)
+        {
+            _testSpeech = new SpeechEngine { SkipLocalFallback = true };
+            _ = _testSpeech.WarmUpAsync();
+        }
 
         // Animate inner sections with stagger
         AnimatePageEntrance(inPage);
@@ -306,14 +311,13 @@ public partial class SetupWindow : Window
 
     private void SetupTestVoice_Click(object sender, RoutedEventArgs e)
     {
-        // Create a temporary SpeechEngine to test
-        var speech = new SpeechEngine
-        {
-            Enabled = true,
-            Volume = (float)SetupVolumeSlider.Value,
-            VoiceGender = _selectedVoiceGender
-        };
-        speech.Speak("Hola, soy ARES. Esta es una prueba de voz.");
+        // Reuse the same engine — Speak() internally calls Stop(),
+        // which cancels any in-progress synthesis/playback on the same instance.
+        _testSpeech ??= new SpeechEngine { SkipLocalFallback = true };
+        _testSpeech.Enabled = true;
+        _testSpeech.Volume = (float)SetupVolumeSlider.Value;
+        _testSpeech.VoiceGender = _selectedVoiceGender;
+        _testSpeech.Speak("Hola, soy ARES. Esta es una prueba de voz.");
     }
 
     // ═══════════════ Finish ═══════════════
@@ -357,6 +361,10 @@ public partial class SetupWindow : Window
             StartupManager.SetEnabled(true);
         else
             StartupManager.SetEnabled(false);
+
+        _testSpeech?.Stop();
+        _testSpeech?.Dispose();
+        _testSpeech = null;
 
         var splash = new SplashWindow(isFirstLaunch: true);
         splash.Show();
