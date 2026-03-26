@@ -18,9 +18,11 @@ public partial class SetupWindow : Window
     private string _selectedColor = "#ff2222";
     private string _selectedPersonality = "formal";
     private string _selectedPerfMode = "ligero";
+    private string _selectedVoiceGender = "masculino";
 
     private Border[] _personalityCards = [];
     private Border[] _perfModeCards = [];
+    private Border[] _voiceGenderCards = [];
     private Grid[] _pages = [];
     private Ellipse[] _dots = [];
 
@@ -31,13 +33,19 @@ public partial class SetupWindow : Window
         {
             _personalityCards = [CardFormal, CardCasual, CardSarcastico, CardTecnico];
             _perfModeCards = [CardLigero, CardAvanzado];
+            _voiceGenderCards = [CardMasculino, CardFemenino];
             _pages = [Page0, Page1, Page2, Page3, Page4];
             _dots = [Dot0, Dot1, Dot2, Dot3, Dot4];
 
             UpdateColorPreview(_selectedColor);
             HighlightPersonalityCard(_selectedPersonality);
             HighlightPerfModeCard(_selectedPerfMode);
+            HighlightVoiceGenderCard(_selectedVoiceGender);
             UpdateNavigation();
+
+            // Wire voice checkbox to show/hide voice settings
+            ChkVoice.Checked += (_, _) => VoiceSettingsPanel.Visibility = Visibility.Visible;
+            ChkVoice.Unchecked += (_, _) => VoiceSettingsPanel.Visibility = Visibility.Collapsed;
 
             // Staggered entrance for the first page content
             await Task.Delay(300);
@@ -263,6 +271,51 @@ public partial class SetupWindow : Window
         }
     }
 
+    // ═══════════════ Voice Gender ═══════════════
+
+    private void VoiceGender_Click(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is Border card && card.Tag is string gender)
+        {
+            _selectedVoiceGender = gender;
+            HighlightVoiceGenderCard(gender);
+            AnimationHelper.BounceSelect(card);
+        }
+    }
+
+    private void HighlightVoiceGenderCard(string gender)
+    {
+        var accent = (SolidColorBrush)FindResource("AccentBrush");
+        var unselected = new SolidColorBrush(Color.FromRgb(0x1e, 0x1e, 0x1e));
+
+        foreach (var card in _voiceGenderCards)
+        {
+            bool isCurrent = (string)card.Tag == gender;
+            card.BorderBrush = isCurrent ? accent : unselected;
+            card.Background = isCurrent
+                ? new SolidColorBrush(Color.FromRgb(0x16, 0x16, 0x16))
+                : new SolidColorBrush(Color.FromRgb(0x11, 0x11, 0x11));
+        }
+    }
+
+    private void SetupVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (SetupVolumeLabel != null)
+            SetupVolumeLabel.Text = $"{e.NewValue:P0}";
+    }
+
+    private void SetupTestVoice_Click(object sender, RoutedEventArgs e)
+    {
+        // Create a temporary SpeechEngine to test
+        var speech = new SpeechEngine
+        {
+            Enabled = true,
+            Volume = (float)SetupVolumeSlider.Value,
+            VoiceGender = _selectedVoiceGender
+        };
+        speech.Speak("Hola, soy ARES. Esta es una prueba de voz.");
+    }
+
     // ═══════════════ Finish ═══════════════
 
     private void Finish()
@@ -293,6 +346,8 @@ public partial class SetupWindow : Window
             CloseToTray = ChkCloseToTray.IsChecked == true,
             ConfirmationAlertsEnabled = ChkConfirmation.IsChecked == true,
             VoiceEnabled = ChkVoice.IsChecked == true,
+            TtsVolume = (float)SetupVolumeSlider.Value,
+            TtsVoiceGender = _selectedVoiceGender,
             ModelKeepAliveMinutes = keepAlive,
             SetupCompleted = true
         });
