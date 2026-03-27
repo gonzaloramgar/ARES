@@ -3,7 +3,7 @@
   "OverlayOpacity": 0.85,
   "FontSize": "medium",
   "OverlayPosition": "bottom-right",
-  "OllamaModel": "qwen2.5:14b",
+  "OllamaModel": "qwen2.5:7b",
   "AssistantName": "ARES",
   "Personality": "formal",
   "ResponseLength": "normal",
@@ -11,12 +11,12 @@
   "ToggleModeHotkey": "Ctrl+Shift+Space",
   "LaunchWithWindows": false,
   "SaveChatHistory": true,
-  "CloseToTray": false,
+  "CloseToTray": true,
   "ConfirmationAlertsEnabled": true,
   "VoiceEnabled": true,
-  "TtsVolume": 0.11510372,
+  "TtsVolume": 0.5,
   "TtsVoiceGender": "masculino",
   "ModelKeepAliveMinutes": 5,
-  "SetupCompleted": true,
-  "PerformanceMode": "avanzado"
+  "SetupCompleted": false,
+  "PerformanceMode": "ligero"
 }

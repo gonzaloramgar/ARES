@@ -208,7 +208,7 @@ public class OllamaClient
     /// Pulls (downloads) a model from the Ollama library.
     /// Reports progress via <paramref name="onProgress"/> (0.0–1.0) and status text.
     /// </summary>
-    public async Task PullModelAsync(string model, Action<double, string>? onProgress = null, CancellationToken ct = default)
+    public async Task PullModelAsync(string model, Action<double, string, long, long>? onProgress = null, CancellationToken ct = default)
     {
         using var pullHttp = new HttpClient { Timeout = TimeSpan.FromHours(2) };
         var payload = JsonConvert.SerializeObject(new { name = model, stream = true });
@@ -236,7 +236,7 @@ public class OllamaClient
                 var total = obj["total"]?.Value<long>() ?? 0;
                 var completed = obj["completed"]?.Value<long>() ?? 0;
                 var pct = total > 0 ? (double)completed / total : 0;
-                onProgress?.Invoke(pct, status);
+                onProgress?.Invoke(pct, status, completed, total);
             }
             catch { /* skip malformed lines */ }
         }

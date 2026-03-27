@@ -400,17 +400,17 @@ public partial class SetupWindow : Window
             {
                 // Step 6: Pull model
                 SetStatus($"Descargando {model}...");
-                await client.PullModelAsync(model, onProgress: (pct, status) =>
+
+                var dlWindow = new ModelDownloadWindow(client, model) { Owner = this };
+                var dlResult = dlWindow.ShowDialog();
+
+                if (dlResult != true)
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        SetProgress(0.55 + 0.40 * pct);
-                        if (status.Contains("pulling"))
-                            SetStatus($"Descargando {model}... {pct:P0}");
-                        else if (status == "success")
-                            SetStatus($"✓ {model} instalado");
-                    });
-                });
+                    SetStatus("Descarga cancelada");
+                    SetupInstallOllama.IsEnabled = true;
+                    OllamaProgressBorder.Visibility = Visibility.Collapsed;
+                    return;
+                }
             }
 
             // Done
