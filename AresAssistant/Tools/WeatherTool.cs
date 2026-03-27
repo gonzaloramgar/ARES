@@ -5,6 +5,10 @@ using System.Net.Http;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para obtener el tiempo meteorológico actual y pronóstico
+/// de 3 días usando coordenadas geográficas. Utiliza la API gratuita Open-Meteo.
+/// </summary>
 public class WeatherTool : ITool
 {
     public string Name => "get_weather";

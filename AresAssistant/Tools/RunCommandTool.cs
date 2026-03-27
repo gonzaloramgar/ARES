@@ -4,6 +4,10 @@ using System.Diagnostics;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para ejecutar comandos de consola con lista blanca de prefijos permitidos
+/// y lista negra de patrones peligrosos. Incluye timeout de 30 segundos.
+/// </summary>
 public class RunCommandTool : ITool
 {
     public string Name => "run_command";

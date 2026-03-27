@@ -3,6 +3,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para leer archivos de texto con límite configurable de líneas.
+/// Soporta alias de rutas mediante PathResolver.
+/// </summary>
 public class ReadFileTool : ITool
 {
     public string Name => "read_file";

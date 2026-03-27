@@ -1,5 +1,9 @@
 namespace AresAssistant.ViewModels;
 
+/// <summary>
+/// ViewModel para la pantalla de splash/carga inicial.
+/// Expone el texto de estado, progreso y flag de completado.
+/// </summary>
 public class SplashViewModel : ViewModelBase
 {
     private string _statusText = "Inicializando ARES...";

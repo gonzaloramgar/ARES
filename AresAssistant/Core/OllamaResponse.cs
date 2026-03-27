@@ -3,6 +3,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Core;
 
+/// <summary>
+/// Respuesta del servidor Ollama a una petición de chat.
+/// Contiene el mensaje del asistente, indicador de finalización y posibles errores.
+/// </summary>
 public class OllamaResponse
 {
     [JsonProperty("message")]
@@ -15,6 +19,10 @@ public class OllamaResponse
     public string? Error { get; set; }
 }
 
+/// <summary>
+/// Representa una llamada a herramienta solicitada por el modelo.
+/// Incluye un ID opcional y la función con nombre y argumentos.
+/// </summary>
 public class OllamaToolCall
 {
     [JsonProperty("id")]
@@ -24,6 +32,10 @@ public class OllamaToolCall
     public OllamaToolCallFunction Function { get; set; } = new();
 }
 
+/// <summary>
+/// Detalle de la función a ejecutar dentro de un tool call:
+/// nombre de la herramienta y sus argumentos como diccionario de JToken.
+/// </summary>
 public class OllamaToolCallFunction
 {
     [JsonProperty("name")]

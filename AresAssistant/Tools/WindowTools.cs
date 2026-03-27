@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para listar todas las ventanas abiertas con título visible.
+/// </summary>
 public class ListWindowsTool : ITool
 {
     public string Name => "list_open_windows";
@@ -30,6 +33,9 @@ public class ListWindowsTool : ITool
     }
 }
 
+/// <summary>
+/// Herramienta para minimizar una ventana abierta buscando por título parcial.
+/// </summary>
 public class MinimizeWindowTool : ITool
 {
     public string Name => "minimize_window";
@@ -58,6 +64,9 @@ public class MinimizeWindowTool : ITool
     }
 }
 
+/// <summary>
+/// Herramienta para maximizar una ventana abierta buscando por título parcial.
+/// </summary>
 public class MaximizeWindowTool : ITool
 {
     public string Name => "maximize_window";

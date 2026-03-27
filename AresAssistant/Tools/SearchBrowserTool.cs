@@ -5,6 +5,10 @@ using System.Web;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para buscar en Google usando un navegador específico detectado en el sistema.
+/// Se instancia una por cada navegador encontrado con su ruta ejecutable.
+/// </summary>
 public class SearchBrowserTool : ITool
 {
     public string Name { get; }

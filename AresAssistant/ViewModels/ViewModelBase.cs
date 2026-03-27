@@ -3,6 +3,11 @@ using System.Runtime.CompilerServices;
 
 namespace AresAssistant.ViewModels;
 
+/// <summary>
+/// Clase base MVVM que implementa INotifyPropertyChanged.
+/// Proporciona <see cref="OnPropertyChanged"/> y <see cref="SetField{T}"/>
+/// para simplificar la notificación de cambios en propiedades.
+/// </summary>
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

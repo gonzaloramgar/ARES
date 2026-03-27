@@ -5,6 +5,9 @@ using System.Web;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para buscar en Google usando el navegador predeterminado del sistema.
+/// </summary>
 public class SearchWebTool : ITool
 {
     public string Name => "search_web";

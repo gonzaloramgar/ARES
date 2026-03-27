@@ -6,6 +6,10 @@ using System.Windows.Forms;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para capturar una imagen de toda la pantalla virtual
+/// y guardarla como PNG en la carpeta temporal del sistema.
+/// </summary>
 public class ScreenshotTool : ITool
 {
     public string Name => "take_screenshot";

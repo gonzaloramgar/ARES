@@ -3,6 +3,10 @@ using System.Windows.Media;
 
 namespace AresAssistant.Config;
 
+/// <summary>
+/// Motor de temas que aplica los colores y tamaños de fuente
+/// a los recursos dinámicos de WPF según la configuración activa.
+/// </summary>
 public static class ThemeEngine
 {
     public static void Apply(AppConfig config)

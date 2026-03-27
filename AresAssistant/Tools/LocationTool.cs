@@ -5,6 +5,11 @@ using System.Net.Http;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para obtener la ubicación aproximada del usuario
+/// mediante su IP pública (ciudad, región, país, coordenadas).
+/// Utiliza la API gratuita ip-api.com sin necesidad de API key.
+/// </summary>
 public class LocationTool : ITool
 {
     public string Name => "get_location";

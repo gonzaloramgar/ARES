@@ -4,6 +4,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Registro central de todas las herramientas disponibles para el agente.
+/// Carga herramientas desde código, tools.json y custom-apps.json.
+/// Optimiza el payload colapsando todas las apps/carpetas en herramientas genéricas únicas.
+/// </summary>
 public class ToolRegistry
 {
     private readonly Dictionary<string, ITool> _tools = new();

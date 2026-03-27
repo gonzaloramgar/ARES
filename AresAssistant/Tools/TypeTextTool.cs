@@ -4,6 +4,10 @@ using System.Windows.Forms;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para simular escritura de texto en la aplicación activa.
+/// Incluye protección contra secuencias de teclas peligrosas y límite de longitud.
+/// </summary>
 public class TypeTextTool : ITool
 {
     public string Name => "type_text";

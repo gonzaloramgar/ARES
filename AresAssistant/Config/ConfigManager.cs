@@ -2,6 +2,10 @@ using Newtonsoft.Json;
 
 namespace AresAssistant.Config;
 
+/// <summary>
+/// Gestiona la carga y persistencia de la configuración de ARES en formato JSON.
+/// Lee config.json al iniciar y lo actualiza cuando el usuario cambia ajustes.
+/// </summary>
 public class ConfigManager
 {
     private readonly string _path;

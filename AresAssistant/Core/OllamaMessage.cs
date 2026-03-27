@@ -2,6 +2,10 @@ using Newtonsoft.Json;
 
 namespace AresAssistant.Core;
 
+/// <summary>
+/// Representa un mensaje en la conversación con Ollama.
+/// Puede ser del usuario, asistente o sistema, y opcionalmente incluir tool calls.
+/// </summary>
 public class OllamaMessage
 {
     [JsonProperty("role")]

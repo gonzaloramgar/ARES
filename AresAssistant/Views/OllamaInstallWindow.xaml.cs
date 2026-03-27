@@ -2,9 +2,15 @@ using System.IO;
 using System.Net.Http;
 using System.Windows;
 using AresAssistant.Core;
+using AresAssistant.Helpers;
 
 namespace AresAssistant.Views;
 
+/// <summary>
+/// Ventana modal para descargar e instalar Ollama automáticamente.
+/// Gestiona 3 fases: descarga del instalador (0-60%), ejecución silenciosa (60-80%)
+/// y espera a que el servicio responda (80-100%).
+/// </summary>
 public partial class OllamaInstallWindow : Window
 {
     private static readonly string InstallerUrl = "https://ollama.com/download/OllamaSetup.exe";
@@ -53,7 +59,7 @@ public partial class OllamaInstallWindow : Window
                         var pct = (double)downloaded / totalBytes;
                         SetProgress(pct * 0.60); // Download = 0–60%
                         TxtPercentage.Text = $"{pct * 60:F0} %";
-                        TxtSize.Text = $"{FormatBytes(downloaded)} / {FormatBytes(totalBytes)}";
+                        TxtSize.Text = $"{FormatHelper.FormatBytes(downloaded)} / {FormatHelper.FormatBytes(totalBytes)}";
                     }
 
                     TxtStatus.Text = "Descargando instalador...";
@@ -140,22 +146,12 @@ public partial class OllamaInstallWindow : Window
             ProgressFill.Width = barWidth * pct;
     }
 
+    /// <summary>Cancela la operación en curso o cierra la ventana si ya terminó.</summary>
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
     {
         if (_cts != null && !_cts.IsCancellationRequested)
             _cts.Cancel();
         else
             DialogResult = false;
-    }
-
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes >= 1_073_741_824)
-            return $"{bytes / 1_073_741_824.0:F2} GB";
-        if (bytes >= 1_048_576)
-            return $"{bytes / 1_048_576.0:F1} MB";
-        if (bytes >= 1024)
-            return $"{bytes / 1024.0:F0} KB";
-        return $"{bytes} B";
     }
 }

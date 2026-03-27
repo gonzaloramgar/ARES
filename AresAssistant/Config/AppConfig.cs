@@ -1,5 +1,9 @@
 namespace AresAssistant.Config;
 
+/// <summary>
+/// Record inmutable con todos los ajustes de la aplicación.
+/// Cada propiedad tiene un valor por defecto seguro para la primera ejecución.
+/// </summary>
 public record AppConfig
 {
     public string AccentColor { get; init; } = "#ff2222";

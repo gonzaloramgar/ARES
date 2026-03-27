@@ -8,6 +8,10 @@ using AresAssistant.Tools;
 
 namespace AresAssistant.ViewModels;
 
+/// <summary>
+/// Representa un mensaje individual en la conversación de chat.
+/// Notifica cambios en <see cref="Content"/> para actualizar el streaming en tiempo real.
+/// </summary>
 public class ChatMessage : INotifyPropertyChanged
 {
     private string _content = "";
@@ -36,6 +40,11 @@ public class ChatMessage : INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
+/// <summary>
+/// ViewModel del chat principal. Gestiona el envío de mensajes,
+/// recepción de tokens en streaming, ejecución de herramientas
+/// y síntesis de voz de las respuestas.
+/// </summary>
 public class ChatViewModel : ViewModelBase
 {
     private readonly AgentLoop _agentLoop;

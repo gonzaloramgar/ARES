@@ -4,6 +4,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Views;
 
+/// <summary>
+/// Diálogo de confirmación para acciones sensibles de herramientas.
+/// Muestra el nombre de la herramienta, sus argumentos y un mensaje
+/// contextual dependiendo del tipo de acción (eliminar, escribir, ejecutar…).
+/// </summary>
 public partial class ConfirmationDialog : Window
 {
     public ConfirmationDialog(string toolName, Dictionary<string, JToken> args)

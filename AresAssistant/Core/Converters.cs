@@ -4,6 +4,10 @@ using System.Windows.Data;
 
 namespace AresAssistant.Core;
 
+/// <summary>
+/// Convierte un booleano en alineación horizontal:
+/// true → Right (mensajes del usuario), false → Left (mensajes del asistente).
+/// </summary>
 public class BoolToAlignmentConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -13,6 +17,9 @@ public class BoolToAlignmentConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>
+/// Convierte un booleano en Visibility: true → Visible, false → Collapsed.
+/// </summary>
 public class BoolToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,6 +29,9 @@ public class BoolToVisibilityConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>
+/// Invierte un valor booleano: true → false, false → true.
+/// </summary>
 public class InvertBoolConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -31,6 +41,9 @@ public class InvertBoolConverter : IValueConverter
         => value is not true;
 }
 
+/// <summary>
+/// Convierte un booleano invertido en Visibility: true → Collapsed, false → Visible.
+/// </summary>
 public class InvertBoolToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -40,6 +53,10 @@ public class InvertBoolToVisibilityConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>
+/// Convierte una cadena hexadecimal de color (ej: "#FF5722") en un SolidColorBrush.
+/// Si el valor es inválido o vacío devuelve Transparent como fallback seguro.
+/// </summary>
 public class HexToColorBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -57,6 +74,10 @@ public class HexToColorBrushConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>
+/// Convierte cadena vacía/null en Visibility.Visible (para mostrar placeholders)
+/// y cadena con contenido en Collapsed.
+/// </summary>
 public class StringEmptyToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

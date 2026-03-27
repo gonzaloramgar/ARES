@@ -3,6 +3,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para crear carpetas. Soporta alias (Desktop, Documents…)
+/// y bloquea la creación en directorios del sistema por seguridad.
+/// </summary>
 public class CreateFolderTool : ITool
 {
     public string Name => "create_folder";

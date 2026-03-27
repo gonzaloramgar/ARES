@@ -3,6 +3,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Ejecuta herramientas aplicando el sistema de permisos y registro de acciones.
+/// Bloquea acciones prohibidas, solicita confirmación para las sensibles
+/// y registra toda ejecución en el ActionLogger.
+/// </summary>
 public class ToolDispatcher
 {
     private readonly ToolRegistry _registry;

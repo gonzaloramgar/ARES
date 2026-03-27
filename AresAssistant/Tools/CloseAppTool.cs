@@ -4,6 +4,10 @@ using System.Diagnostics;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para cerrar aplicaciones abiertas por nombre de ventana o proceso.
+/// Busca coincidencias parciales (case-insensitive) en título y nombre de proceso.
+/// </summary>
 public class CloseAppTool : ITool
 {
     public string Name => "close_app";

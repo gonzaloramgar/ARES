@@ -1,9 +1,14 @@
 using System.Windows;
 using System.Windows.Input;
 using AresAssistant.Core;
+using AresAssistant.Helpers;
 
 namespace AresAssistant.Views;
 
+/// <summary>
+/// Ventana modal de progreso para la descarga de modelos de Ollama.
+/// Muestra porcentaje, tamaño descargado y estado en tiempo real.
+/// </summary>
 public partial class ModelDownloadWindow : Window
 {
     private readonly OllamaClient _client;
@@ -54,7 +59,7 @@ public partial class ModelDownloadWindow : Window
 
             // Size info
             if (total > 0)
-                TxtSize.Text = $"{FormatBytes(completed)} / {FormatBytes(total)}";
+                TxtSize.Text = $"{FormatHelper.FormatBytes(completed)} / {FormatHelper.FormatBytes(total)}";
 
             // Status
             if (status.Contains("pulling"))
@@ -80,14 +85,4 @@ public partial class ModelDownloadWindow : Window
         }
     }
 
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes >= 1_073_741_824)
-            return $"{bytes / 1_073_741_824.0:F2} GB";
-        if (bytes >= 1_048_576)
-            return $"{bytes / 1_048_576.0:F1} MB";
-        if (bytes >= 1024)
-            return $"{bytes / 1024.0:F0} KB";
-        return $"{bytes} B";
-    }
 }

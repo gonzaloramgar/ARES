@@ -1,5 +1,9 @@
 namespace AresAssistant.ViewModels;
 
+/// <summary>
+/// ViewModel principal de la aplicación.
+/// Controla el modo de visualización: overlay compacto o HUD completo.
+/// </summary>
 public class MainViewModel : ViewModelBase
 {
     private bool _isOverlayMode = true;

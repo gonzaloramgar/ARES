@@ -4,6 +4,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para eliminar carpetas enviándolas a la papelera de reciclaje.
+/// Bloquea la eliminación de directorios del sistema por seguridad.
+/// </summary>
 public class DeleteFolderTool : ITool
 {
     public string Name => "delete_folder";

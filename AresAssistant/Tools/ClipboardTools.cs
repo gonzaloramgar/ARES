@@ -4,6 +4,9 @@ using System.Windows;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para leer el contenido actual del portapapeles del sistema.
+/// </summary>
 public class ClipboardReadTool : ITool
 {
     public string Name => "clipboard_read";
@@ -25,6 +28,9 @@ public class ClipboardReadTool : ITool
     }
 }
 
+/// <summary>
+/// Herramienta para escribir texto en el portapapeles del sistema.
+/// </summary>
 public class ClipboardWriteTool : ITool
 {
     public string Name => "clipboard_write";

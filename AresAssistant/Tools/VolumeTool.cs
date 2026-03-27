@@ -4,6 +4,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para ajustar el volumen maestro del sistema o silenciarlo.
+/// Utiliza la API CoreAudio de Windows vía NAudio.
+/// </summary>
 public class VolumeTool : ITool
 {
     public string Name => "set_volume";

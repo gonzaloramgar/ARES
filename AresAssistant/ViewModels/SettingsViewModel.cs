@@ -4,6 +4,11 @@ using AresAssistant.Core;
 
 namespace AresAssistant.ViewModels;
 
+/// <summary>
+/// ViewModel de la pantalla de ajustes.
+/// Expone todas las propiedades configurables (tema, modelo, voz, rendimiento…)
+/// y métodos para guardar, verificar Ollama y detectar hardware.
+/// </summary>
 public class SettingsViewModel : ViewModelBase
 {
     private readonly ConfigManager _configManager;

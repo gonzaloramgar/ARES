@@ -5,6 +5,10 @@ using System.Diagnostics;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para obtener información del sistema en tiempo real:
+/// uso de CPU, RAM, disco libre, tiempo de actividad y hora actual.
+/// </summary>
 public class SystemInfoTool : ITool
 {
     public string Name => "get_system_info";

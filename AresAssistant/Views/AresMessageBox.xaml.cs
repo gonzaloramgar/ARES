@@ -3,6 +3,10 @@ using System.Windows.Input;
 
 namespace AresAssistant.Views;
 
+/// <summary>
+/// Reemplazo personalizado de MessageBox.Show con el estilo visual de ARES.
+/// Soporta los modos OK, OKCancel, YesNo y YesNoCancel.
+/// </summary>
 public partial class AresMessageBox : Window
 {
     public MessageBoxResult Result { get; private set; } = MessageBoxResult.OK;

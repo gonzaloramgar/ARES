@@ -3,6 +3,10 @@ using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.Tools;
 
+/// <summary>
+/// Herramienta para escribir contenido completo en un archivo de texto.
+/// Crea directorios intermedios automáticamente si no existen.
+/// </summary>
 public class WriteFileTool : ITool
 {
     public string Name => "write_file";
