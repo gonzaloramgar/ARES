@@ -536,7 +536,7 @@
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <CheckBox x:Name="ChkVoice" Style="{StaticResource AresCheckBox}"
-                                              Content="Leer respuestas en voz alta" IsChecked="False"/>
+                                              Content="Leer respuestas en voz alta" IsChecked="True"/>
                                     <TextBlock Text="ARES leerá sus respuestas usando síntesis de voz neuronal"
                                                FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,6,0,0"/>
                                 </StackPanel>
