@@ -311,8 +311,6 @@ public partial class SetupWindow : Window
 
     // ═══════════════ Ollama Auto-Install ═══════════════
 
-    private static readonly string OllamaInstallerUrl = "https://ollama.com/download/OllamaSetup.exe";
-
     private async void SetupInstallOllama_Click(object sender, RoutedEventArgs e)
     {
         SetupInstallOllama.IsEnabled = false;
@@ -331,61 +329,29 @@ public partial class SetupWindow : Window
 
             if (!ollamaReady)
             {
-                // Step 2: Download the installer
-                SetStatus("Descargando Ollama...");
-                SetProgress(0.05);
-                var installerPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OllamaSetup.exe");
-
-                using (var http = new HttpClient { Timeout = TimeSpan.FromMinutes(10) })
+                // Step 1b: Try to start Ollama if installed but not running
+                if (OllamaClient.IsInstalled())
                 {
-                    using var resp = await http.GetAsync(OllamaInstallerUrl, HttpCompletionOption.ResponseHeadersRead);
-                    resp.EnsureSuccessStatusCode();
-                    var totalBytes = resp.Content.Headers.ContentLength ?? 0;
-                    using var dlStream = await resp.Content.ReadAsStreamAsync();
-                    using var fs = File.Create(installerPath);
-                    var buffer = new byte[81920];
-                    long downloaded = 0;
-                    int read;
-                    while ((read = await dlStream.ReadAsync(buffer)) > 0)
-                    {
-                        await fs.WriteAsync(buffer.AsMemory(0, read));
-                        downloaded += read;
-                        if (totalBytes > 0)
-                            SetProgress(0.05 + 0.25 * ((double)downloaded / totalBytes));
-                    }
-                }
-
-                // Step 3: Run installer silently
-                SetStatus("Instalando Ollama...");
-                SetProgress(0.32);
-                var psi = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = installerPath,
-                    Arguments = "/VERYSILENT /NORESTART",
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
-                var proc = System.Diagnostics.Process.Start(psi);
-                if (proc != null)
-                    await proc.WaitForExitAsync();
-
-                try { File.Delete(installerPath); } catch { }
-
-                // Step 4: Wait for Ollama API to come up
-                SetStatus("Esperando a que Ollama inicie...");
-                SetProgress(0.40);
-                for (int i = 0; i < 30; i++)
-                {
-                    await Task.Delay(2000);
-                    if (await client.IsAvailableAsync()) { ollamaReady = true; break; }
-                    SetProgress(0.40 + 0.10 * (i / 30.0));
+                    SetStatus("Iniciando Ollama...");
+                    SetProgress(0.05);
+                    ollamaReady = await client.TryStartAsync(15);
                 }
 
                 if (!ollamaReady)
                 {
-                    SetStatus("⚠ Ollama no responde — inicia 'ollama serve' manualmente");
-                    SetupInstallOllama.IsEnabled = true;
-                    return;
+                    // Step 2: Not installed — show installer window
+                    SetStatus("Instalando Ollama...");
+                    var installWindow = new OllamaInstallWindow { Owner = this };
+                    var installResult = installWindow.ShowDialog();
+
+                    if (installResult != true)
+                    {
+                        SetStatus("Instalación cancelada");
+                        SetupInstallOllama.IsEnabled = true;
+                        OllamaProgressBorder.Visibility = Visibility.Collapsed;
+                        return;
+                    }
+                    ollamaReady = true;
                 }
             }
 
