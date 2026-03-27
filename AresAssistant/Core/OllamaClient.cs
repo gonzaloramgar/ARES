@@ -170,6 +170,71 @@ public class OllamaClient
     }
 
     /// <summary>
+    /// Returns true if the 'ollama' executable is found on the system (PATH or default install dir).
+    /// </summary>
+    public static bool IsInstalled()
+    {
+        // Check PATH
+        var pathDirs = Environment.GetEnvironmentVariable("PATH")?.Split(';') ?? [];
+        foreach (var dir in pathDirs)
+        {
+            if (File.Exists(Path.Combine(dir, "ollama.exe")))
+                return true;
+        }
+        // Default install location
+        var defaultPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Programs", "Ollama", "ollama.exe");
+        return File.Exists(defaultPath);
+    }
+
+    /// <summary>
+    /// Attempts to start 'ollama serve' if it's installed but not running.
+    /// Returns true if Ollama becomes available within the timeout.
+    /// </summary>
+    public async Task<bool> TryStartAsync(int timeoutSeconds = 15)
+    {
+        if (await IsAvailableAsync())
+            return true;
+
+        if (!IsInstalled())
+            return false;
+
+        try
+        {
+            // Find ollama executable
+            var exePath = "ollama";
+            var defaultPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Programs", "Ollama", "ollama.exe");
+            if (File.Exists(defaultPath))
+                exePath = defaultPath;
+
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = "serve",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            System.Diagnostics.Process.Start(psi);
+
+            // Wait for API to respond
+            for (int i = 0; i < timeoutSeconds * 2; i++)
+            {
+                await Task.Delay(500);
+                if (await IsAvailableAsync())
+                    return true;
+            }
+        }
+        catch { /* failed to start */ }
+
+        return false;
+    }
+
+    /// <summary>
     /// Tells Ollama to unload <paramref name="model"/> from RAM immediately.
     /// Uses keep_alive=0 per the Ollama API spec.
     /// </summary>

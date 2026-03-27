@@ -43,6 +43,10 @@ public partial class MainWindow : Window
 
         var ollamaClient = new OllamaClient();
         _ollamaClient = ollamaClient;
+
+        // Auto-start Ollama if installed but not running
+        _ = ollamaClient.TryStartAsync(10);
+
         var history = new ConversationHistory();
         var registry = new ToolRegistry();
         var permManager = new PermissionManager();
