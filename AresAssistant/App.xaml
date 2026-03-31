@@ -17,14 +17,17 @@
             <SolidColorBrush x:Key="AccentBrush" Color="#ff2222"/>
             <Color x:Key="AccentMediaColor">#ff2222</Color>
             <SolidColorBrush x:Key="AccentGlowBrush" Color="#66ff2222"/>
-            <!-- OverlayBackgroundBrush alpha = OverlayOpacity (default 0x90 = ~90%) -->
-            <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#e508080d"/>
+            <!-- OverlayBackgroundBrush alpha = OverlayOpacity (default 0xc0 = ~75%) -->
+            <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#c808080d"/>
             <SolidColorBrush x:Key="BackgroundBrush" Color="#08080d"/>
             <SolidColorBrush x:Key="SurfaceBrush" Color="#0d0d16"/>
             <SolidColorBrush x:Key="SurfaceLightBrush" Color="#141420"/>
             <SolidColorBrush x:Key="TextBrush" Color="#f0f0f8"/>
             <SolidColorBrush x:Key="SubtextBrush" Color="#686880"/>
             <SolidColorBrush x:Key="BorderBrush" Color="#22222e"/>
+            <!-- Glass surface brushes for futuristic panels -->
+            <SolidColorBrush x:Key="GlassBrush" Color="#1a141428"/>
+            <SolidColorBrush x:Key="GlassBorderBrush" Color="#22ffffff"/>
 
             <!-- Font sizes -->
             <sys:Double x:Key="FontSizeNormal" xmlns:sys="clr-namespace:System;assembly=mscorlib">14</sys:Double>
@@ -48,9 +51,9 @@
                             <Border Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="8" Padding="3,5">
+                                    CornerRadius="12" Padding="3,5">
                                 <Border.Effect>
-                                    <DropShadowEffect ShadowDepth="0" BlurRadius="20" Opacity="0.6" Color="#000000"/>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="28" Opacity="0.7" Color="#000000"/>
                                 </Border.Effect>
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
@@ -164,16 +167,16 @@
                             <Border x:Name="Bd" Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                    CornerRadius="10" Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Bd" Property="Background" Value="#141420"/>
-                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#33333f"/>
+                                    <Setter TargetName="Bd" Property="Background" Value="#1a141428"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#33ffffff"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="Bd" Property="Background" Value="#0d0d16"/>
+                                    <Setter TargetName="Bd" Property="Background" Value="#22141428"/>
                                     <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentGlowBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -217,13 +220,13 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#33333f"/>
-                                    <Setter TargetName="Bd" Property="Background" Value="#0f0f1a"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#44ffffff"/>
+                                    <Setter TargetName="Bd" Property="Background" Value="#1a0f0f1a"/>
                                 </Trigger>
                                 <Trigger Property="IsFocused" Value="True">
                                     <Setter TargetName="Bd" Property="BorderBrush"
                                             Value="{DynamicResource AccentBrush}"/>
-                                    <Setter TargetName="Bd" Property="Background" Value="#0f0f1a"/>
+                                    <Setter TargetName="Bd" Property="Background" Value="#1a0f0f1a"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
@@ -336,7 +339,7 @@
                                             <Border x:Name="Bd"
                                                     Background="{DynamicResource SurfaceBrush}"
                                                     BorderBrush="{DynamicResource BorderBrush}"
-                                                    BorderThickness="1" CornerRadius="6">
+                                                    BorderThickness="1" CornerRadius="10">
                                                 <Path Data="M 0,0 L 5,5 L 10,0"
                                                       Stroke="{DynamicResource SubtextBrush}"
                                                       StrokeThickness="1.5"
@@ -348,7 +351,7 @@
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter TargetName="Bd" Property="BorderBrush"
                                                             Value="{DynamicResource AccentBrush}"/>
-                                                    <Setter TargetName="Bd" Property="Background" Value="#0f0f1a"/>
+                                                    <Setter TargetName="Bd" Property="Background" Value="#1a0f0f1a"/>
                                                 </Trigger>
                                                 <Trigger Property="IsChecked" Value="True">
                                                     <Setter TargetName="Bd" Property="BorderBrush"
@@ -383,7 +386,7 @@
                                     <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="300">
                                         <Border Background="{DynamicResource SurfaceBrush}"
                                                 BorderBrush="{DynamicResource AccentBrush}"
-                                                BorderThickness="1" CornerRadius="0,0,6,6">
+                                                BorderThickness="1" CornerRadius="0,0,10,10">
                                             <Border.Effect>
                                                 <DropShadowEffect ShadowDepth="0" BlurRadius="16" Opacity="0.5" Color="#000000"/>
                                             </Border.Effect>

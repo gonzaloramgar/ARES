@@ -9,7 +9,7 @@
         ResizeMode="NoResize">
 
     <Border x:Name="RootBorder"
-            CornerRadius="14"
+            CornerRadius="22"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
             Opacity="0">
         <Border.Background>
@@ -23,7 +23,7 @@
         </Border.RenderTransform>
         <Grid>
             <!-- Horizontal accent glow at top -->
-            <Border VerticalAlignment="Top" Height="1" CornerRadius="14,14,0,0"
+            <Border VerticalAlignment="Top" Height="1" CornerRadius="22,22,0,0"
                     Margin="80,0" Opacity="0.8" IsHitTestVisible="False">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

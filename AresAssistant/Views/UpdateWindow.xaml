@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
-    <Border CornerRadius="12"
+    <Border CornerRadius="18"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Opacity="0"
             x:Name="RootBorder">
         <Border.Background>

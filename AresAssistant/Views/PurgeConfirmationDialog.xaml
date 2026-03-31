@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
-    <Border x:Name="RootBorder" CornerRadius="14"
+    <Border x:Name="RootBorder" CornerRadius="20"
             BorderBrush="#cc3333" BorderThickness="2" Opacity="0">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">

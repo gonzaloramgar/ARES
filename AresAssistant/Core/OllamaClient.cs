@@ -22,7 +22,8 @@ public class OllamaClient
         int numCtx = 4096,
         int numThread = 0,
         int numPredict = 512,
-        int numBatch = 512)
+        int numBatch = 512,
+        string keepAlive = "30m")
     {
         var options = numThread > 0
             ? (object)new { num_ctx = numCtx, num_thread = numThread, num_predict = numPredict, num_batch = numBatch, temperature = 0.7, repeat_penalty = 1.1 }
@@ -32,6 +33,7 @@ public class OllamaClient
         {
             model,
             stream = false,
+            keep_alive = keepAlive,
             messages = messages.Select(m => new
             {
                 role = m.Role,
@@ -78,7 +80,8 @@ public class OllamaClient
         int numCtx = 4096,
         int numThread = 0,
         int numPredict = 512,
-        int numBatch = 512)
+        int numBatch = 512,
+        string keepAlive = "30m")
     {
         var options = numThread > 0
             ? (object)new { num_ctx = numCtx, num_thread = numThread, num_predict = numPredict, num_batch = numBatch, temperature = 0.7, repeat_penalty = 1.1 }
@@ -88,6 +91,7 @@ public class OllamaClient
         {
             model,
             stream = true,
+            keep_alive = keepAlive,
             messages = messages.Select(m => new
             {
                 role = m.Role,
@@ -251,6 +255,22 @@ public class OllamaClient
         catch { /* failed to start */ }
 
         return false;
+    }
+
+    /// <summary>
+    /// Loads <paramref name="model"/> into RAM without running inference (prompt="").
+    /// Returns as soon as the model is loaded; no tokens generated.
+    /// </summary>
+    public async Task PreloadModelAsync(string model, string keepAlive = "30m")
+    {
+        try
+        {
+            var payload = JsonConvert.SerializeObject(new { model, prompt = "", keep_alive = keepAlive });
+            await _http.PostAsync(
+                $"{BaseUrl}/api/generate",
+                new StringContent(payload, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+        }
+        catch { /* best-effort — non-fatal */ }
     }
 
     /// <summary>

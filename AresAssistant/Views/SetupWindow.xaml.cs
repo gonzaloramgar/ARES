@@ -112,7 +112,7 @@ public partial class SetupWindow : Window
 
             _dots[i].Fill = active ? accent
                           : visited ? accent
-                          : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
+                          : new SolidColorBrush(Color.FromRgb(0x2a, 0x2a, 0x42));
 
             double targetSize = active ? 10 : 8;
             double targetOpacity = active ? 1.0 : visited ? 0.6 : 0.35;
@@ -133,9 +133,8 @@ public partial class SetupWindow : Window
         int delay = 0;
         foreach (var child in FindVisualChildren<Border>(page))
         {
-            // Only animate top-level section borders (Background = #0b0b0b)
-            if (child.Parent is StackPanel && child.Background is SolidColorBrush bg
-                && bg.Color == Color.FromRgb(0x0b, 0x0b, 0x0b))
+            // Only animate top-level section borders (direct children of page StackPanel with padding)
+            if (child.Parent is StackPanel && child.Padding.Left >= 14)
             {
                 AnimationHelper.FadeSlideIn(child, fromY: AnimationHelper.SlideDistanceSmall, delayMs: delay);
                 delay += AnimationHelper.IsAdvanced ? 100 : 50;

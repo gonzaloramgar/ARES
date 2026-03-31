@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Width="1200" Height="800">
 
-    <!-- Outer shell: 1.5px border, prominent accent glow -->
-    <Border Background="{DynamicResource OverlayBackgroundBrush}" CornerRadius="14"
+    <!-- Outer shell: futuristic glass with accent glow -->
+    <Border Background="{DynamicResource OverlayBackgroundBrush}" CornerRadius="20"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5">
         <Border.Effect>
-            <DropShadowEffect ShadowDepth="0" BlurRadius="40" Opacity="0.4" Color="#ff2222"/>
+            <DropShadowEffect ShadowDepth="0" BlurRadius="60" Opacity="0.55" Color="#ff2222"/>
         </Border.Effect>
         <Grid>
             <Grid.RowDefinitions>
@@ -24,23 +24,23 @@
 
             <!-- Header spans all columns — glass gradient + bottom accent separator -->
             <Border Grid.Row="0" Grid.ColumnSpan="3"
-                    CornerRadius="14,14,0,0"
+                    CornerRadius="20,20,0,0"
                     MouseLeftButtonDown="Header_MouseLeftButtonDown">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#13131f" Offset="0"/>
-                        <GradientStop Color="#0a0a14" Offset="1"/>
+                        <GradientStop Color="#1a141428" Offset="0"/>
+                        <GradientStop Color="#0d0a0a14" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
                 <Grid>
-                    <!-- Bottom accent separator line -->
-                    <Rectangle VerticalAlignment="Bottom" Height="1.5" Margin="0">
+                    <!-- Bottom accent separator line — brighter glass edge -->
+                    <Rectangle VerticalAlignment="Bottom" Height="1" Margin="0">
                         <Rectangle.Fill>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                 <GradientStop Color="#00ff2222" Offset="0"/>
-                                <GradientStop Color="#66ff2222" Offset="0.25"/>
-                                <GradientStop Color="#99ff2222" Offset="0.5"/>
-                                <GradientStop Color="#44ff2222" Offset="0.75"/>
+                                <GradientStop Color="#77ff2222" Offset="0.2"/>
+                                <GradientStop Color="#ccff2222" Offset="0.5"/>
+                                <GradientStop Color="#55ff2222" Offset="0.8"/>
                                 <GradientStop Color="#00ff2222" Offset="1"/>
                             </LinearGradientBrush>
                         </Rectangle.Fill>
@@ -87,12 +87,12 @@
 
             <!-- Left panel: Tool list -->
             <Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
-                    BorderBrush="#18181f" BorderThickness="0,0,1,0"
+                    BorderBrush="#22222e" BorderThickness="0,0,1,0"
                     Padding="14,14,12,14">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#0a0a12" Offset="0"/>
-                        <GradientStop Color="#0d0d16" Offset="1"/>
+                        <GradientStop Color="#1a0a0a12" Offset="0"/>
+                        <GradientStop Color="#220d0d18" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
                 <DockPanel>
@@ -169,28 +169,28 @@
                                     </Border.ContextMenu>
                                     <Border.Style>
                                         <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="16,16,16,4"/>
+                                            <Setter Property="CornerRadius" Value="18,18,18,5"/>
                                             <Setter Property="BorderThickness" Value="1"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsUser}" Value="False">
-                                                    <Setter Property="BorderBrush" Value="#1e1e2e"/>
+                                                    <Setter Property="BorderBrush" Value="#2a2a40"/>
                                                     <Setter Property="Background">
                                                         <Setter.Value>
                                                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                                <GradientStop Color="#111120" Offset="0"/>
-                                                                <GradientStop Color="#0d0d18" Offset="1"/>
+                                                                <GradientStop Color="#cc111120" Offset="0"/>
+                                                                <GradientStop Color="#cc0d0d18" Offset="1"/>
                                                             </LinearGradientBrush>
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsUser}" Value="True">
-                                                    <Setter Property="CornerRadius" Value="16,16,4,16"/>
+                                                    <Setter Property="CornerRadius" Value="18,18,5,18"/>
                                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentGlowBrush}"/>
                                                     <Setter Property="Background">
                                                         <Setter.Value>
                                                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                                <GradientStop Color="#200a0a" Offset="0"/>
-                                                                <GradientStop Color="#160606" Offset="1"/>
+                                                                <GradientStop Color="#cc200a0a" Offset="0"/>
+                                                                <GradientStop Color="#cc160606" Offset="1"/>
                                                             </LinearGradientBrush>
                                                         </Setter.Value>
                                                     </Setter>
@@ -342,12 +342,12 @@
 
             <!-- Right panel: System status -->
             <Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
-                    BorderBrush="#18181f" BorderThickness="1,0,0,0"
+                    BorderBrush="#22222e" BorderThickness="1,0,0,0"
                     Padding="14,14,14,14">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-                        <GradientStop Color="#0a0a12" Offset="0"/>
-                        <GradientStop Color="#0d0d16" Offset="1"/>
+                        <GradientStop Color="#1a0a0a12" Offset="0"/>
+                        <GradientStop Color="#220d0d18" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
                 <DockPanel>
@@ -375,7 +375,7 @@
 
             <!-- Status bar / Thinking indicator -->
             <Grid Grid.Row="2" Grid.Column="1" Height="28" Margin="0">
-                <Border Background="#09090f" BorderBrush="#15151f" BorderThickness="0,1,0,0">
+                <Border Background="#0c0c14" BorderBrush="#1a1a2e" BorderThickness="0,1,0,0">
                     <Grid Margin="16,0">
                         <!-- Left accent indicator bar -->
                         <Rectangle Width="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"
@@ -464,18 +464,19 @@
 
             <!-- Input row -->
             <Border Grid.Row="3" Grid.Column="1"
-                    BorderBrush="#15151f" BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,20,20"
+                    BorderBrush="#1a1a2e" BorderThickness="0,1,0,0"
                     Padding="14,11,14,14">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#0a0a12" Offset="0"/>
-                        <GradientStop Color="#07070f" Offset="1"/>
+                        <GradientStop Color="#14141e" Offset="0"/>
+                        <GradientStop Color="#0a0a14" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
-                <!-- Unified input container -->
-                <Border Background="{DynamicResource SurfaceBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1" CornerRadius="10">
+                <!-- Unified input container — glass style -->
+                <Border Background="{DynamicResource GlassBrush}"
+                        BorderBrush="{DynamicResource GlassBorderBrush}"
+                        BorderThickness="1" CornerRadius="14">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

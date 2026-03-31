@@ -54,6 +54,17 @@ public class AgentLoop
             _history.ReplaceSystemPrompt(systemPrompt);
     }
 
+    /// <summary>
+    /// Pre-loads the model into RAM using a zero-inference request (empty prompt).
+    /// Returns as soon as the model is loaded — no tokens generated, no blocking.
+    /// Fire-and-forget — failures are silently ignored.
+    /// </summary>
+    public async Task WarmUpAsync()
+    {
+        var keepAlive = _config.ModelKeepAliveMinutes > 0 ? $"{_config.ModelKeepAliveMinutes}m" : "-1";
+        await _ollamaClient.PreloadModelAsync(_config.OllamaModel, keepAlive);
+    }
+
     private string BuildSystemPrompt()
     {
         // Cache: only rebuild when personality/length/name changes
@@ -79,48 +90,19 @@ public class AgentLoop
         sb.AppendLine("Eres directo, eficiente y ligeramente formal.");
         sb.AppendLine();
 
-        sb.AppendLine("## USO DE HERRAMIENTAS — REGLA ABSOLUTA");
-        sb.AppendLine("Tienes herramientas para controlar el ordenador. DEBES USARLAS siempre que el usuario pida una acción.");
-        sb.AppendLine("NUNCA describas una acción sin ejecutarla con la herramienta correspondiente.");
-        sb.AppendLine("NUNCA respondas 'voy a...', 'procedo a...', 'puedo...' sin haber llamado a la herramienta.");
-        sb.AppendLine("Si el usuario pide:");
-        sb.AppendLine("  - abrir algo            → usa open_app o open_folder");
-        sb.AppendLine("  - cerrar algo            → usa close_app");
-        sb.AppendLine("  - crear una carpeta      → usa create_folder");
-        sb.AppendLine("  - eliminar algo          → usa delete_folder");
-        sb.AppendLine("  - recuperar de papelera   → usa recycle_bin (action='restore')");
-        sb.AppendLine("  - leer un archivo        → usa read_file");
-        sb.AppendLine("  - escribir un archivo    → usa write_file");
-        sb.AppendLine("  - buscar en internet     → usa search_web o search_browser");
-        sb.AppendLine("  - ejecutar un comando    → usa run_command");
-        sb.AppendLine("  - hacer una captura      → usa screenshot");
-        sb.AppendLine("  - escribir texto         → usa type_text");
-        sb.AppendLine("  - información del sistema→ usa system_info");
-        sb.AppendLine("  - subir/bajar volumen    → usa volume");
-        sb.AppendLine("  - ventanas               → usa list_open_windows, minimize_window, maximize_window");
-        sb.AppendLine("  - portapapeles            → usa clipboard_read, clipboard_write");
-        sb.AppendLine("  - recordar app/juego      → usa remember_app (guarda nombre + ruta para siempre)");
-        sb.AppendLine("  - ubicación/localización  → usa get_location (detecta ciudad por IP, no necesita GPS)");
-        sb.AppendLine("  - tiempo/clima/meteorología→ usa get_location PRIMERO y luego get_weather con las coordenadas");
-        sb.AppendLine("Usa la herramienta PRIMERO. Explica brevemente lo que hiciste DESPUÉS.");
-        sb.AppendLine("Cuando la herramienta devuelve un resultado, informa al usuario con una frase breve y natural. NO vuelvas a ejecutar la misma herramienta.");
-        sb.AppendLine("Si el resultado dice que la acción ya se realizó (ej: app ya abierta), informa al usuario sin reintentar.");
-        sb.AppendLine("NUNCA digas que una aplicación no existe sin haber llamado a open_app. Siempre intenta abrir con la herramienta.");
-        sb.AppendLine("La herramienta open_app detecta si la aplicación YA ESTÁ EN EJECUCIÓN y te lo dirá. Si dice que ya está abierta, informa al usuario sin intentar abrir otra vez.");
-        sb.AppendLine("Aunque antes haya fallado, VUELVE A INTENTARLO con la herramienta porque las apps se escanean de nuevo cada inicio.");
-        sb.AppendLine("Si open_app no encuentra una app y el usuario da la ruta, usa remember_app para guardarla. Así la recordarás para siempre.");
+        sb.AppendLine("## HERRAMIENTAS — REGLA ABSOLUTA");
+        sb.AppendLine("Tienes herramientas para controlar el PC. ÚSALAS siempre que el usuario pida una acción. NUNCA describas sin ejecutar.");
+        sb.AppendLine("open_app/open_folder • close_app • create_folder • delete_folder • recycle_bin");
+        sb.AppendLine("read_file • write_file • search_web • search_browser • run_command • screenshot");
+        sb.AppendLine("type_text • system_info • volume • list_open_windows • minimize_window • maximize_window");
+        sb.AppendLine("clipboard_read • clipboard_write • remember_app • get_location • get_weather");
+        sb.AppendLine("Clima: usa get_location primero, luego get_weather. Herramienta PRIMERO, explicación breve DESPUÉS.");
+        sb.AppendLine("Si la herramienta dice que ya está hecho, informa sin reintentar. Si open_app no encuentra la app y el usuario da la ruta, usa remember_app.");
         sb.AppendLine();
 
-        sb.AppendLine("## CONTEXTO CONVERSACIONAL");
-        sb.AppendLine("Recuerda las acciones que acabas de realizar. Si el usuario dice 'bórrala', 'borra eso',");
-        sb.AppendLine("'lo que hiciste', 'deshaz eso' o cualquier referencia similar, MIRA los mensajes anteriores");
-        sb.AppendLine("para identificar la carpeta, archivo o acción concreta y ejecuta la herramienta adecuada.");
-        sb.AppendLine("Ejemplo: si creaste 'Desktop/patata' y el usuario dice 'bórrala' → usa delete_folder con path='Desktop/patata'.");
-        sb.AppendLine();
-
-        sb.AppendLine("## LÍMITES");
-        sb.AppendLine("Nunca borres archivos del sistema ni mates procesos críticos del SO.");
-        sb.AppendLine("Si una acción es rechazada por el usuario, no la reintentas.");
+        sb.AppendLine("## CONTEXTO");
+        sb.AppendLine("Recuerda acciones anteriores. 'bórrala', 'deshaz eso' → mira mensajes previos e identifica el objetivo exacto.");
+        sb.AppendLine("Nunca borres archivos del sistema. Si una acción es rechazada, no la reintentas.");
         sb.AppendLine();
 
         sb.AppendLine("## RUTAS DEL SISTEMA");
@@ -154,6 +136,7 @@ public class AgentLoop
     public async Task RunAsync(string userMessage)
     {
         var (numCtx, numThread, historyLimit, numPredict, numBatch) = _config.GetPerformanceParams();
+        var keepAlive = _config.ModelKeepAliveMinutes > 0 ? $"{_config.ModelKeepAliveMinutes}m" : "-1";
 
         _history.Add(new OllamaMessage("user", userMessage));
         _history.TrimToLast(historyLimit);
@@ -171,7 +154,7 @@ public class AgentLoop
             if (useStreaming)
             {
                 // Attempt streaming — gives instant token-by-token feedback
-                var streamed = await TryStreamResponseAsync(numCtx, numThread, numPredict, numBatch).ConfigureAwait(false);
+                var streamed = await TryStreamResponseAsync(numCtx, numThread, numPredict, numBatch, keepAlive).ConfigureAwait(false);
                 if (streamed.HasValue)
                 {
                     if (streamed.Value.toolResponse != null)
@@ -223,7 +206,8 @@ public class AgentLoop
                     numCtx,
                     numThread,
                     numPredict,
-                    numBatch).ConfigureAwait(false);
+                    numBatch,
+                    keepAlive).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -348,7 +332,7 @@ public class AgentLoop
     /// Returns null if streaming fails (caller should fall back to non-streaming).
     /// Buffers initial tokens to detect text-based tool calls before emitting to the UI.
     /// </summary>
-    private async Task<(string? text, OllamaResponse? toolResponse)?> TryStreamResponseAsync(int numCtx, int numThread, int numPredict, int numBatch)
+    private async Task<(string? text, OllamaResponse? toolResponse)?> TryStreamResponseAsync(int numCtx, int numThread, int numPredict, int numBatch, string keepAlive)
     {
         try
         {
@@ -358,7 +342,7 @@ public class AgentLoop
             bool flushed = false;
 
             // Tool-call text markers — if any of these appear early, keep buffering
-            const int BufferThreshold = 120; // characters before we decide it's safe text
+            const int BufferThreshold = 50; // characters before we decide it's safe text
 
             await foreach (var chunk in _ollamaClient.ChatStreamAsync(
                 _history.ToList(),
@@ -367,7 +351,8 @@ public class AgentLoop
                 numCtx,
                 numThread,
                 numPredict,
-                numBatch))
+                numBatch,
+                keepAlive))
             {
                 if (chunk.IsToolCall)
                     return (null, chunk.ToolResponse);

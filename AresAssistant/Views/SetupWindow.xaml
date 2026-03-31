@@ -10,13 +10,13 @@
         ResizeMode="NoResize">
 
     <Border x:Name="RootBorder"
-            CornerRadius="16"
+            CornerRadius="20"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
             Opacity="0">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#0f0f0f" Offset="0"/>
-                <GradientStop Color="#060606" Offset="1"/>
+                <GradientStop Color="#0c0c14" Offset="0"/>
+                <GradientStop Color="#06060c" Offset="1"/>
             </LinearGradientBrush>
         </Border.Background>
         <Border.RenderTransform>
@@ -31,7 +31,7 @@
             </Grid.RowDefinitions>
 
             <!-- Horizontal accent glow at top -->
-            <Border VerticalAlignment="Top" Height="1" CornerRadius="16,16,0,0"
+            <Border VerticalAlignment="Top" Height="1" CornerRadius="20,20,0,0"
                     Margin="80,0" Opacity="0.8" IsHitTestVisible="False" Grid.RowSpan="3">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -48,13 +48,13 @@
                 <Ellipse x:Name="Dot0" Width="10" Height="10" Margin="4,0"
                          Fill="{DynamicResource AccentBrush}" Opacity="1"/>
                 <Ellipse x:Name="Dot1" Width="8" Height="8" Margin="4,0"
-                         Fill="#333333" Opacity="0.5"/>
+                         Fill="#2a2a42" Opacity="0.5"/>
                 <Ellipse x:Name="Dot2" Width="8" Height="8" Margin="4,0"
-                         Fill="#333333" Opacity="0.5"/>
+                         Fill="#2a2a42" Opacity="0.5"/>
                 <Ellipse x:Name="Dot3" Width="8" Height="8" Margin="4,0"
-                         Fill="#333333" Opacity="0.5"/>
+                         Fill="#2a2a42" Opacity="0.5"/>
                 <Ellipse x:Name="Dot4" Width="8" Height="8" Margin="4,0"
-                         Fill="#333333" Opacity="0.5"/>
+                         Fill="#2a2a42" Opacity="0.5"/>
             </StackPanel>
 
             <!-- ══════════  PAGE CONTAINER  ══════════ -->
@@ -100,17 +100,17 @@
                             </TextBlock>
 
                             <TextBlock Text="{x:Static local:App.AppVersion}"
-                                       FontSize="10" Foreground="#555555"
+                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}"
                                        HorizontalAlignment="Center" FontFamily="Consolas"
                                        Margin="0,0,0,4"/>
 
                             <TextBlock Text="Vamos a personalizar tu asistente paso a paso"
-                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontSize="11" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,30"/>
 
                             <!-- Name -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,18" Margin="0,0,0,16">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,18" Margin="0,0,0,16">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -138,12 +138,12 @@
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Personaliza el aspecto de ARES"
-                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontSize="11" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,22"/>
 
                             <!-- Color -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -176,8 +176,8 @@
                             </Border>
 
                             <!-- Font Size + Opacity + Position -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,12">
                                         <Grid.ColumnDefinitions>
@@ -226,12 +226,12 @@
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Personalidad, rendimiento y modelo de IA"
-                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontSize="11" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,22"/>
 
                             <!-- Personality Cards -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -242,7 +242,7 @@
                                     </StackPanel>
                                     <UniformGrid Columns="2" Rows="2">
                                         <Border x:Name="CardFormal" Tag="formal"
-                                                Background="#111111" CornerRadius="8"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
                                                 BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5"
                                                 Margin="0,0,5,5" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
@@ -251,13 +251,13 @@
                                                 <TextBlock Text="Formal" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Profesional y preciso" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
                                         <Border x:Name="CardCasual" Tag="casual"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                                 Margin="5,0,0,5" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
@@ -265,13 +265,13 @@
                                                 <TextBlock Text="Casual" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Relajado y amigable" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
                                         <Border x:Name="CardSarcastico" Tag="sarcastico"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                                 Margin="0,5,5,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
@@ -279,13 +279,13 @@
                                                 <TextBlock Text="Sarcástico" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Ingenioso y mordaz" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
                                         <Border x:Name="CardTecnico" Tag="tecnico"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                                 Margin="5,5,0,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
@@ -293,7 +293,7 @@
                                                 <TextBlock Text="Técnico" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Detallado y analítico" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
@@ -302,8 +302,8 @@
                             </Border>
 
                             <!-- Response Length -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -321,8 +321,8 @@
                             </Border>
 
                             <!-- Hardware info -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -331,11 +331,11 @@
                                                    FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
-                                    <Border Background="#0a0a0a" CornerRadius="6" Padding="14,10"
-                                            BorderBrush="#161616" BorderThickness="1">
+                                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="10" Padding="14,10"
+                                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1">
                                         <StackPanel>
                                             <TextBlock x:Name="HwCpuText" Text="CPU: detectando..."
-                                                       FontSize="10" Foreground="#808080" FontFamily="Consolas"/>
+                                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"/>
                                             <TextBlock x:Name="HwRamText" Text="RAM: detectando..."
                                                        FontSize="10" Foreground="#808080" FontFamily="Consolas" Margin="0,3,0,0"/>
                                             <TextBlock x:Name="HwRecommendText" Text=""
@@ -347,8 +347,8 @@
                             </Border>
 
                             <!-- Mode cards -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -359,7 +359,7 @@
                                     </StackPanel>
                                     <UniformGrid Columns="2">
                                         <Border x:Name="CardLigero" Tag="ligero"
-                                                Background="#111111" CornerRadius="8"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
                                                 BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5"
                                                 Margin="0,0,5,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="PerfMode_Click">
@@ -368,16 +368,16 @@
                                                 <TextBlock Text="Ligero" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Rápido, poca RAM" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                                 <TextBlock Text="qwen2.5:7b · 4K ctx" FontSize="8"
-                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" Opacity="0.7" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </Border>
                                         <Border x:Name="CardAvanzado" Tag="avanzado"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                                 Margin="5,0,0,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="PerfMode_Click">
                                             <StackPanel>
@@ -385,10 +385,10 @@
                                                 <TextBlock Text="Avanzado" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Más contexto y detalle" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                                 <TextBlock Text="qwen2.5:14b · 8K ctx" FontSize="8"
-                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" Opacity="0.7" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </Border>
@@ -397,8 +397,8 @@
                             </Border>
 
                             <!-- Auto-install Ollama + model -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -443,12 +443,12 @@
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Comportamiento y atajos del sistema"
-                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontSize="11" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,22"/>
 
                             <!-- Hotkeys -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -479,8 +479,8 @@
                             </Border>
 
                             <!-- Toggles -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -501,8 +501,8 @@
                             </Border>
 
                             <!-- Keep alive -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16">
                                 <StackPanel>
                                     <TextBlock Text="Descargar modelo de RAM tras inactividad" FontSize="11"
                                                Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,8"/>
@@ -527,12 +527,12 @@
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Configura cómo habla tu asistente"
-                                       FontSize="11" Foreground="#707070" HorizontalAlignment="Center"
+                                       FontSize="11" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,22"/>
 
                             <!-- Enable voice -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -549,8 +549,8 @@
                             </Border>
 
                             <!-- Gender cards -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -570,16 +570,16 @@
                                                 <TextBlock Text="Masculino" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Alvaro / Piper neural" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                                 <TextBlock Text="Voz offline disponible" FontSize="8"
-                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" Opacity="0.7" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </Border>
                                         <Border x:Name="CardFemenino" Tag="femenino"
-                                                Background="#111111" CornerRadius="8"
-                                                BorderBrush="#1e1e1e" BorderThickness="1.5"
+                                                Background="{DynamicResource GlassBrush}" CornerRadius="12"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                                 Margin="5,0,0,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="VoiceGender_Click">
                                             <StackPanel HorizontalAlignment="Center">
@@ -587,10 +587,10 @@
                                                 <TextBlock Text="Femenino" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Dalia / Piper neural" FontSize="9"
-                                                           Foreground="#999999" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,4,0,0"/>
                                                 <TextBlock Text="Voz offline disponible" FontSize="8"
-                                                           Foreground="#666666" HorizontalAlignment="Center"
+                                                           Foreground="{DynamicResource SubtextBrush}" Opacity="0.7" HorizontalAlignment="Center"
                                                            FontFamily="Consolas" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </Border>
@@ -599,8 +599,8 @@
                             </Border>
 
                             <!-- Volume -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -628,8 +628,8 @@
                             </Border>
 
                             <!-- Piper offline download -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16" Margin="0,0,0,14">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -656,8 +656,8 @@
                             </Border>
 
                             <!-- Test voice -->
-                            <Border Background="#0b0b0b" CornerRadius="10"
-                                    BorderBrush="#1a1a1a" BorderThickness="1" Padding="22,16">
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="14"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="22,16">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                         <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -683,7 +683,7 @@
             </Grid>
 
             <!-- ══════════  NAVIGATION  ══════════ -->
-            <Border Grid.Row="2" CornerRadius="0,0,16,16" Padding="24,10,24,16">
+            <Border Grid.Row="2" CornerRadius="0,0,20,20" Padding="24,10,24,16">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="#0c0c0c" Offset="0"/>

@@ -30,7 +30,7 @@ public record AppConfig
     /// Minutes of inactivity before telling Ollama to unload the model from RAM.
     /// 0 = never auto-unload.
     /// </summary>
-    public int ModelKeepAliveMinutes { get; init; } = 5;
+    public int ModelKeepAliveMinutes { get; init; } = 30;
     public bool SetupCompleted { get; init; } = false;
 
     /// <summary>"ligero" or "avanzado". Controls model params, context window, history trim.</summary>
@@ -44,8 +44,8 @@ public record AppConfig
             //  14b: mismo ctx que 7b (4K sobra), batch grande para evaluar prompt rápido,
             //  num_predict=512 evita respuestas interminables, auto-threads.
             "avanzado" => (4096, 0, 20, 512, 1024),
-            //  7b: ctx 4K, 4 hilos fijos, batch estándar.
-            _          => (4096, 4, 20, 512, 512),
+            //  7b: ctx 4K, auto-threads, batch estándar.
+            _          => (4096, 0, 20, 512, 512),
         };
     }
 }

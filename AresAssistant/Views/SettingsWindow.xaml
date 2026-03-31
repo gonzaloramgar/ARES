@@ -9,7 +9,7 @@
         ResizeMode="NoResize">
 
     <Border x:Name="RootBorder"
-            CornerRadius="14"
+            CornerRadius="20"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
             Opacity="0">
         <Border.Background>
@@ -42,7 +42,7 @@
             </Border>
 
             <!-- ════════ Header ════════ -->
-            <Border Grid.Row="0" CornerRadius="14,14,0,0"
+            <Border Grid.Row="0" CornerRadius="20,20,0,0"
                     MouseLeftButtonDown="Header_MouseLeftButtonDown">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -76,8 +76,8 @@
                 <StackPanel Margin="18,14,18,10">
 
                     <!-- ═══════════════════ APARIENCIA ═══════════════════ -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
+                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
+                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -198,8 +198,8 @@
                     </Border>
 
                     <!-- ═══════════════════ INTELIGENCIA ARTIFICIAL ═══════════════════ -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
+                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
+                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -252,8 +252,8 @@
 
                                 <!-- Ollama status + check button — FIX: proper layout -->
                                 <Border Grid.Row="2" Grid.ColumnSpan="2"
-                                        Background="#0a0a14" CornerRadius="6"
-                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        Background="#1a0a0a14" CornerRadius="10"
+                                        BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
                                         Padding="12,8" Margin="0,2,0,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -275,8 +275,8 @@
                     </Border>
 
                     <!-- ═══════════════════ RENDIMIENTO ═══════════════════ -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
+                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
+                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -287,8 +287,8 @@
                             </StackPanel>
 
                             <!-- Hardware info -->
-                            <Border Background="#080812" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
-                                    BorderBrush="#1a1a28" BorderThickness="1">
+                            <Border Background="#1a080812" CornerRadius="10" Padding="12,8" Margin="0,0,0,10"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1">
                                 <StackPanel>
                                     <TextBlock Text="{Binding HwCpuInfo}" FontSize="10"
                                                Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"/>
@@ -321,8 +321,8 @@
                     </Border>
 
                     <!-- ═══════════════════ TECLAS RÁPIDAS ═══════════════════ -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
+                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
+                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -353,8 +353,8 @@
                     </Border>
 
                     <!-- ═══════════════════ SISTEMA ═══════════════════ -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
+                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
+                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
@@ -380,8 +380,8 @@
                                       IsChecked="{Binding VoiceEnabled}" Margin="0,6,0,0"/>
 
                             <!-- TTS engine status + volume -->
-                            <Border Margin="0,8,0,0" Background="#0a0a14" CornerRadius="6"
-                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="12,10">
+                            <Border Margin="0,8,0,0" Background="#1a0a0a14" CornerRadius="10"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="12,10">
                                 <StackPanel>
                                     <!-- Voice gender -->
                                     <Grid Margin="0,0,0,8">
@@ -470,7 +470,7 @@
                     </Border>
 
                     <!-- ═══════════════════ ZONA DE PELIGRO ═══════════════════ -->
-                    <Border Background="#110a0a" CornerRadius="10"
+                    <Border Background="#1a100808" CornerRadius="16"
                             BorderBrush="#3a1515" BorderThickness="1" Padding="18,14" Margin="0,0,0,4">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
@@ -496,7 +496,7 @@
             </ScrollViewer>
 
             <!-- ════════ Footer ════════ -->
-            <Border Grid.Row="2" CornerRadius="0,0,14,14" Padding="20,0">
+            <Border Grid.Row="2" CornerRadius="0,0,20,20" Padding="20,0">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="#0a0a14" Offset="0"/>

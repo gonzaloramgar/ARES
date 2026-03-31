@@ -9,7 +9,7 @@
         ResizeMode="NoResize"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="12"
+    <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="18"
             BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5">
         <Border.Effect>
             <DropShadowEffect Color="Black" BlurRadius="30" ShadowDepth="0" Opacity="0.6"/>

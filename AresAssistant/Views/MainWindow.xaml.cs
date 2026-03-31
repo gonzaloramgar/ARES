@@ -91,6 +91,7 @@ public partial class MainWindow : Window
         }
 
         var agentLoop = new AgentLoop(ollamaClient, history, registry, dispatcher, config);
+        _ = agentLoop.WarmUpAsync(); // Pre-load model into RAM to eliminate cold-start delay
 
         var speech = new SpeechEngine { Enabled = config.VoiceEnabled, Volume = config.TtsVolume, VoiceGender = config.TtsVoiceGender, SkipLocalFallback = true };
         WarmUpTask = speech.WarmUpAsync();  // Pre-warm Piper + Edge TTS so first response uses neural voice
