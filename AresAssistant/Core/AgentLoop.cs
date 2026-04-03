@@ -436,9 +436,14 @@ public class AgentLoop
         {
             // Strip the tool_call markup and any surrounding tags from the visible text
             var cleaned = Regex.Replace(content, @"<?\/?tool_call>?", "", RegexOptions.IgnoreCase);
-            cleaned = Regex.Replace(cleaned, @"_icall_", "", RegexOptions.IgnoreCase);
+            cleaned = Regex.Replace(cleaned, @"_?icall_?\s*\(?\)?", "", RegexOptions.IgnoreCase);
             cleaned = TextToolCallRegex.Replace(cleaned, "");
+            cleaned = Regex.Replace(cleaned, @"[^\u0009\u000A\u000D\u0020-\u007E\u00A1-\u00FF]", string.Empty);
             cleaned = cleaned.Trim('\n', '\r', ' ');
+
+            if (LooksLikeToolPreambleNoise(cleaned))
+                cleaned = string.Empty;
+
             return (calls, cleaned);
         }
 
@@ -546,15 +551,33 @@ public class AgentLoop
     /// <summary>Definitely contains tool call patterns</summary>
     private static bool LooksLikeToolCall(string text)
         => text.Contains("tool_call", StringComparison.OrdinalIgnoreCase)
-        || text.Contains("_icall_", StringComparison.OrdinalIgnoreCase)
+        || text.Contains("_icall", StringComparison.OrdinalIgnoreCase)
         || (text.Contains("\"name\"") && text.Contains("\"arguments\""));
 
     /// <summary>Could still become a tool call (partial patterns in early tokens)</summary>
     private static bool MightBeToolCall(string text)
         => text.Contains("<tool", StringComparison.OrdinalIgnoreCase)
         || text.Contains("_ical", StringComparison.OrdinalIgnoreCase)
+        || text.Contains("_icall", StringComparison.OrdinalIgnoreCase)
         || text.TrimStart().StartsWith("{")
         || text.TrimStart().StartsWith("<");
+
+    private static bool LooksLikeToolPreambleNoise(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return true;
+
+        var t = text.Trim();
+        if (t.Length <= 10)
+            return true;
+
+        var lower = t.ToLowerInvariant();
+        return lower.Contains("call to")
+            || lower.Contains("analyze")
+            || lower.Contains("screen")
+            || lower.Contains("needs to be in english")
+            || lower.Contains("let's try again");
+    }
 
     private static bool IsSimpleGreeting(string? text)
     {

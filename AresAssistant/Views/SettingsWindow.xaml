@@ -316,7 +316,25 @@
                                            Foreground="{DynamicResource SubtextBrush}"
                                            VerticalAlignment="Center" TextWrapping="Wrap"
                                            FontFamily="Consolas"/>
+                                    <Border Margin="0,8,0,0" Padding="10,8" CornerRadius="8"
+                                            Background="#130f1624" BorderBrush="#2a3553" BorderThickness="1">
+                                        <TextBlock x:Name="AiHealthSummaryText"
+                                                   Text="SALUD IA: pendiente de verificación"
+                                                   FontSize="10" FontFamily="Consolas"
+                                                   Foreground="{DynamicResource SubtextBrush}"
+                                                   TextWrapping="Wrap"/>
+                                    </Border>
                                     <WrapPanel Margin="0,8,0,0">
+                                        <Button Content="Chequear salud IA"
+                                            Style="{StaticResource GhostButton}"
+                                            Height="30" Padding="14,0"
+                                            Margin="0,0,8,8" Click="CheckAiHealth_Click"
+                                            ToolTip="Verifica estado de Ollama, API y modelos preferidos"/>
+                                        <Button Content="Auto reparar IA"
+                                            Style="{StaticResource AresButton}"
+                                            Height="30" Padding="14,0"
+                                            Margin="0,0,8,8" Click="AutoRepairAiHealth_Click"
+                                            ToolTip="Inicia Ollama e instala faltantes detectados"/>
                                         <Button Content="Verificar"
                                             Style="{StaticResource GhostButton}"
                                             Height="30" Padding="14,0"

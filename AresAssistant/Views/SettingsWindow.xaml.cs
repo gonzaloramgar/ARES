@@ -23,7 +23,39 @@ public partial class SettingsWindow : Window
             await _vm.CheckOllamaAsync();
             await _vm.DetectHardwareAsync();
             _vm.RefreshTtsStatus();
+            await RefreshAiHealthPanelAsync();
         };
+    }
+
+    private async Task RefreshAiHealthPanelAsync()
+    {
+        try
+        {
+            var checker = new OllamaHealthChecker();
+            var report = await checker.CheckAsync(new OllamaClient(), _vm.BuildConfig());
+            AiHealthSummaryText.Text = report.Status switch
+            {
+                OllamaHealthStatus.Healthy => "SALUD IA: OK · Ollama y modelos listos",
+                OllamaHealthStatus.NotInstalled => "SALUD IA: Ollama no instalado",
+                OllamaHealthStatus.InstalledNotRunning => "SALUD IA: Ollama no disponible (servicio caído)",
+                OllamaHealthStatus.ModelsMissing => "SALUD IA: faltan modelos preferidos",
+                _ => "SALUD IA: estado desconocido"
+            };
+        }
+        catch
+        {
+            AiHealthSummaryText.Text = "SALUD IA: no se pudo verificar";
+        }
+    }
+
+    private async void CheckAiHealth_Click(object sender, RoutedEventArgs e)
+    {
+        await RefreshAiHealthPanelAsync();
+    }
+
+    private async void AutoRepairAiHealth_Click(object sender, RoutedEventArgs e)
+    {
+        await QuickRepairAiCoreAsync(showResultDialog: true);
     }
 
     private void PresetColor_Click(object sender, RoutedEventArgs e)
@@ -282,6 +314,9 @@ public partial class SettingsWindow : Window
     }
 
     private async void QuickRepairAi_Click(object sender, RoutedEventArgs e)
+        => await QuickRepairAiCoreAsync(showResultDialog: true);
+
+    private async Task QuickRepairAiCoreAsync(bool showResultDialog)
     {
         try
         {
@@ -290,8 +325,10 @@ public partial class SettingsWindow : Window
 
             if (data.MissingRouting.Count == 0 && !data.NeedsVisionModel)
             {
-                AresMessageBox.Show($"No hay nada que reparar.\n\n{data.Report}", "ARES — Reparar todo IA");
+                if (showResultDialog)
+                    AresMessageBox.Show($"No hay nada que reparar.\n\n{data.Report}", "ARES — Reparar todo IA");
                 _vm.OllamaStatus = "Sin reparaciones pendientes";
+                await RefreshAiHealthPanelAsync();
                 return;
             }
 
@@ -303,13 +340,17 @@ public partial class SettingsWindow : Window
 
             _vm.OllamaStatus = "Generando diagnóstico actualizado...";
             var refreshed = await BuildRoutingDiagnosticDataAsync();
-            AresMessageBox.Show($"{summary}\n\n{refreshed.Report}", "ARES — Reparar todo IA");
+            if (showResultDialog)
+                AresMessageBox.Show($"{summary}\n\n{refreshed.Report}", "ARES — Reparar todo IA");
             _vm.OllamaStatus = "Reparación IA completada";
+            await RefreshAiHealthPanelAsync();
         }
         catch (Exception ex)
         {
             _vm.OllamaStatus = "Error en reparación IA";
-            AresMessageBox.Show($"No se pudo completar la reparación:\n{ex.Message}", "ARES — Error");
+            if (showResultDialog)
+                AresMessageBox.Show($"No se pudo completar la reparación:\n{ex.Message}", "ARES — Error");
+            await RefreshAiHealthPanelAsync();
         }
     }
 

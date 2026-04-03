@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using AresAssistant.Config;
 using AresAssistant.Core;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,8 @@ namespace AresAssistant.Tools;
 
 public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager) : ITool
 {
+    private const int VisionAttemptTimeoutSeconds = 14;
+
     public string Name => "analyze_screen";
     public string Description => "Captura la pantalla y la analiza con un modelo local multimodal de Ollama.";
 
@@ -77,11 +80,14 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
                         }
                     };
 
-                    var resp = await client.ChatAsync(messages, new List<ToolDefinition>(), model, keepAlive: "5m");
+                    var resp = await ChatWithTimeoutAsync(messages, model, VisionAttemptTimeoutSeconds);
+                    if (resp == null)
+                        continue;
+
                     if (!string.IsNullOrWhiteSpace(resp.Error))
                         continue;
 
-                    var text = resp.Message?.Content?.Trim();
+                    var text = SanitizeVisionOutput(resp.Message?.Content);
                     if (string.IsNullOrWhiteSpace(text))
                         continue;
 
@@ -93,7 +99,10 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
                     if (LooksLikeLowConfidenceGeneric(text) && attempt < attemptPrompts.Length - 1)
                         continue;
 
-                    text = await ForceSpanishOutputAsync(text, model);
+                    text = ForceSpanishOutput(text);
+                    text = SanitizeVisionOutput(text);
+                    if (string.IsNullOrWhiteSpace(text))
+                        continue;
 
                     return new ToolResult(true, $"[modelo: {model}]\n{CompactVisionResponse(text)}");
                 }
@@ -142,7 +151,7 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
         }
 
         // Final guarantee: only likely vision models.
-        return candidates.Where(ModelRouter.IsLikelyVisionModel).ToList();
+        return candidates.Where(ModelRouter.IsLikelyVisionModel).Take(2).ToList();
     }
 
     private static bool LooksLikeVisionRefusal(string text)
@@ -189,7 +198,7 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
         return basePrompt + "Haz mejor esfuerzo para identificar apps por iconos/estructura. Si no hay certeza total, marca como 'probable'. Limita tu respuesta a 8 bullets.";
     }
 
-    private async Task<string> ForceSpanishOutputAsync(string text, string model)
+    private static string ForceSpanishOutput(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             return text;
@@ -197,28 +206,43 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
         if (!LooksLikelyEnglishMixed(text))
             return text;
 
+        // Avoid a second model round-trip here (latency + occasional language corruption).
+        // If output still looks mixed, return a stable Spanish fallback.
+        return "No pude obtener un análisis visual estable en español en este intento. Vuelve a pedirlo indicando un área concreta (por ejemplo: panel derecho, errores visibles o chat central).";
+    }
+
+    private async Task<OllamaResponse?> ChatWithTimeoutAsync(List<OllamaMessage> messages, string model, int timeoutSeconds)
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         try
         {
-            var rewrite = await client.ChatAsync(
-                new List<OllamaMessage>
-                {
-                    new("system", "Convierte el texto recibido a español de España. Mantén el formato de viñetas y el contenido técnico, sin añadir información nueva. Devuelve solo el texto final en español."),
-                    new("user", text)
-                },
+            return await client.ChatAsync(
+                messages,
                 new List<ToolDefinition>(),
                 model,
-                keepAlive: "5m");
-
-            var rewritten = rewrite.Message?.Content?.Trim();
-            if (!string.IsNullOrWhiteSpace(rewritten))
-                return rewritten;
+                keepAlive: "5m",
+                cancellationToken: cts.Token);
         }
-        catch
+        catch (OperationCanceledException)
         {
-            // If rewrite fails, keep original response.
+            return null;
         }
+    }
 
-        return text;
+    private static string SanitizeVisionOutput(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return string.Empty;
+
+        var normalized = text.Replace("\r\n", "\n");
+        normalized = Regex.Replace(normalized, @"(?im)^\s*_?icall\s*\(?\)?\s*$", string.Empty);
+        normalized = Regex.Replace(normalized, @"(?is)</?tool_call>", string.Empty);
+        normalized = Regex.Replace(normalized, @"(?im)^\s*\{\s*\""name\""\s*:\s*\"".*\""\s*,\s*\""arguments\""\s*:\s*\{.*\}\s*\}\s*$", string.Empty);
+
+        // Strip non-Latin scripts and control noise while keeping Spanish accents/punctuation.
+        normalized = Regex.Replace(normalized, @"[^\u0009\u000A\u000D\u0020-\u007E\u00A1-\u00FF]", string.Empty);
+        normalized = Regex.Replace(normalized, @"\n{3,}", "\n\n");
+        return normalized.Trim();
     }
 
     private static bool LooksLikelyEnglishMixed(string text)

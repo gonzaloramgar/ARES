@@ -243,6 +243,16 @@
 
             <!-- Status / Thinking indicator — with left accent indicator bar -->
             <Grid Grid.Row="2" Height="26">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.IsInitializingModules}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
                 <Border Background="Transparent" BorderBrush="#221515" BorderThickness="0,1,0,0">
                     <!-- Status text when idle -->
                     <Grid>

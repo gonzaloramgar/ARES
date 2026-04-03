@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using AresAssistant.Core;
 using AresAssistant.Config;
 using AresAssistant.Tools;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AresAssistant.ViewModels;
@@ -91,6 +92,7 @@ public class ChatViewModel : ViewModelBase
     private readonly OllamaClient? _ollamaClient;
     private readonly DispatcherTimer _dashboardTimer;
     private readonly HttpClient _dashboardHttp = new() { Timeout = TimeSpan.FromSeconds(10) };
+    private readonly WeatherCacheStore _weatherCache = new("data/weather-cache.json");
     private readonly PerformanceCounter? _cpuCounter;
 
     private string _inputText = "";
@@ -103,6 +105,8 @@ public class ChatViewModel : ViewModelBase
     private string _cpuText = "CPU --%";
     private string _ramText = "RAM --%";
     private string _weatherText = "Clima: cargando...";
+    private bool _weatherIsCached;
+    private string _weatherCacheBadgeText = "CACHE";
     private string _dailyProductivitySummary = "Pulsa 'Resumen IA' para generar el resumen diario.";
     private bool _weatherRefreshInFlight;
     private DateTime _lastWeatherRefreshUtc = DateTime.MinValue;
@@ -170,6 +174,18 @@ public class ChatViewModel : ViewModelBase
     {
         get => _weatherText;
         set => SetField(ref _weatherText, value);
+    }
+
+    public bool WeatherIsCached
+    {
+        get => _weatherIsCached;
+        set => SetField(ref _weatherIsCached, value);
+    }
+
+    public string WeatherCacheBadgeText
+    {
+        get => _weatherCacheBadgeText;
+        set => SetField(ref _weatherCacheBadgeText, value);
     }
 
     public string DailyProductivitySummary
@@ -435,6 +451,7 @@ public class ChatViewModel : ViewModelBase
         if (!WidgetWeatherEnabled)
         {
             WeatherText = "Clima desactivado";
+            WeatherIsCached = false;
             return;
         }
 
@@ -542,6 +559,7 @@ public class ChatViewModel : ViewModelBase
             if (location == null)
             {
                 WeatherText = "Clima no disponible";
+                WeatherIsCached = false;
                 return;
             }
 
@@ -552,6 +570,7 @@ public class ChatViewModel : ViewModelBase
             if (lat == 0 && lon == 0)
             {
                 WeatherText = "Clima no disponible";
+                WeatherIsCached = false;
                 return;
             }
 
@@ -565,16 +584,63 @@ public class ChatViewModel : ViewModelBase
             WeatherText = temp.HasValue
                 ? $"{city}: {temp.Value:0.#}°C · {DecodeWeatherCode(code)}"
                 : $"{city}: clima no disponible";
+            WeatherIsCached = false;
+            WeatherCacheBadgeText = "LIVE";
+
+            _weatherCache.Save(BuildWeatherCacheKey(lat, lon), JsonConvert.SerializeObject(new
+            {
+                city,
+                temperature = temp,
+                weatherCode = code
+            }));
+
             _lastWeatherRefreshUtc = DateTime.UtcNow;
         }
         catch
         {
+            var location = await LocationResolver.ResolveByIpAsync();
+            if (location != null)
+            {
+                var cached = _weatherCache.TryGet(BuildWeatherCacheKey(location.Latitude, location.Longitude), TimeSpan.FromHours(6));
+                if (cached != null)
+                {
+                    try
+                    {
+                        var data = JObject.Parse(cached.PayloadJson);
+                        var city = data["city"]?.ToString() ?? "Local";
+                        var temp = data["temperature"]?.ToObject<double>();
+                        var code = data["weatherCode"]?.ToObject<int>() ?? -1;
+                        WeatherText = temp.HasValue
+                            ? $"{city}: {temp.Value:0.#}°C · {DecodeWeatherCode(code)}"
+                            : $"{city}: clima en caché";
+                        var age = DateTime.UtcNow - cached.SavedAtUtc;
+                        WeatherIsCached = true;
+                        WeatherCacheBadgeText = age.TotalMinutes < 1
+                            ? "CACHE · ahora"
+                            : $"CACHE · {Math.Max(1, (int)Math.Round(age.TotalMinutes))}m";
+                        return;
+                    }
+                    catch
+                    {
+                        // fallback below
+                    }
+                }
+            }
+
             WeatherText = "Clima no disponible";
+            WeatherIsCached = false;
         }
         finally
         {
             _weatherRefreshInFlight = false;
         }
+    }
+
+    private static string BuildWeatherCacheKey(double lat, double lon)
+    {
+        var latKey = Math.Round(lat, 2).ToString(CultureInfo.InvariantCulture);
+        var lonKey = Math.Round(lon, 2).ToString(CultureInfo.InvariantCulture);
+        return $"{latKey},{lonKey}";
     }
 
     private static string BuildClock(string timeZoneId, string label, TimeSpan fallbackOffset)

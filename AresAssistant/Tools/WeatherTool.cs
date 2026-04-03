@@ -29,6 +29,7 @@ public class WeatherTool : ITool
     };
 
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private static readonly WeatherCacheStore Cache = new("data/weather-cache.json");
 
     public async Task<ToolResult> ExecuteAsync(Dictionary<string, JToken> args)
     {
@@ -77,7 +78,8 @@ public class WeatherTool : ITool
                     ciudad = resolvedLocation?.City ?? city ?? "Local",
                     latitud = lat,
                     longitud = lon,
-                    source = resolvedLocation?.Source ?? "args"
+                    source = resolvedLocation?.Source ?? "args",
+                    cache = false
                 },
                 actual = new
                 {
@@ -91,12 +93,44 @@ public class WeatherTool : ITool
                 pronostico = BuildForecast(daily)
             };
 
-            return new ToolResult(true, JsonConvert.SerializeObject(result, Formatting.Indented));
+            var payload = JsonConvert.SerializeObject(result, Formatting.Indented);
+            Cache.Save(BuildCacheKey(lat.Value, lon.Value), payload);
+            return new ToolResult(true, payload);
         }
         catch (Exception ex)
         {
+            var lat = ReadDouble(args, "latitude", "latitud", "lat");
+            var lon = ReadDouble(args, "longitude", "longitud", "lon", "lng");
+            if (lat.HasValue && lon.HasValue)
+            {
+                var cached = Cache.TryGet(BuildCacheKey(lat.Value, lon.Value), TimeSpan.FromHours(6));
+                if (cached != null)
+                {
+                    try
+                    {
+                        var cachedJson = JObject.Parse(cached.PayloadJson);
+                        cachedJson["ubicacion"] ??= new JObject();
+                        cachedJson["ubicacion"]!["cache"] = true;
+                        cachedJson["ubicacion"]!["cache_saved_at_utc"] = cached.SavedAtUtc;
+                        cachedJson["nota"] = "Resultado desde caché por fallo temporal de proveedor.";
+                        return new ToolResult(true, cachedJson.ToString(Formatting.Indented));
+                    }
+                    catch
+                    {
+                        return new ToolResult(true, cached.PayloadJson);
+                    }
+                }
+            }
+
             return new ToolResult(false, $"Error al obtener el tiempo: {ex.Message}");
         }
+    }
+
+    private static string BuildCacheKey(double lat, double lon)
+    {
+        var latKey = Math.Round(lat, 2).ToString(CultureInfo.InvariantCulture);
+        var lonKey = Math.Round(lon, 2).ToString(CultureInfo.InvariantCulture);
+        return $"{latKey},{lonKey}";
     }
 
     private static double? ReadDouble(Dictionary<string, JToken> args, params string[] keys)

@@ -11,6 +11,7 @@ public partial class AutomationStudioWindow : Window
 {
     private readonly ScheduledTaskStore _store;
     private readonly PermissionManager _permission;
+    private bool _suppressCellChangeSave;
 
     public AutomationStudioWindow(ScheduledTaskStore store, PermissionManager permission)
     {
@@ -49,8 +50,43 @@ public partial class AutomationStudioWindow : Window
 
     private void RefreshGrid()
     {
+        _suppressCellChangeSave = true;
         GridTasks.ItemsSource = null;
         GridTasks.ItemsSource = _store.GetAll();
+        _suppressCellChangeSave = false;
+    }
+
+    private void GridTasks_RowEditEnding(object sender, System.Windows.Controls.DataGridRowEditEndingEventArgs e)
+    {
+        if (e.EditAction != System.Windows.Controls.DataGridEditAction.Commit)
+            return;
+
+        if (e.Row.Item is not ScheduledTaskItem item)
+            return;
+
+        if (!ScheduledTaskStore.IsValidTime(item.Time))
+        {
+            AresMessageBox.Show("Formato de hora inválido. Usa HH:mm", "ARES — Automation Studio");
+            // restore grid data from store to avoid inconsistent edits
+            RefreshGrid();
+            return;
+        }
+
+        _store.Upsert(item);
+    }
+
+    private void GridTasks_CurrentCellChanged(object? sender, EventArgs e)
+    {
+        if (_suppressCellChangeSave)
+            return;
+
+        if (GridTasks.SelectedItem is not ScheduledTaskItem item)
+            return;
+
+        if (!ScheduledTaskStore.IsValidTime(item.Time))
+            return;
+
+        _store.Upsert(item);
     }
 
     private void Add_Click(object sender, RoutedEventArgs e)

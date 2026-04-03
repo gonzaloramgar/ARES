@@ -158,9 +158,10 @@
                 </Border>
 
                 <Border Grid.Row="2" BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" CornerRadius="12" Background="{DynamicResource GlassBrush}">
-                    <DataGrid x:Name="GridTasks" Margin="0" Style="{StaticResource StudioDataGrid}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column">
+                    <DataGrid x:Name="GridTasks" Margin="0" Style="{StaticResource StudioDataGrid}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False" HeadersVisibility="Column"
+                              RowEditEnding="GridTasks_RowEditEnding" CurrentCellChanged="GridTasks_CurrentCellChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="90"/>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="90" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Hora" Binding="{Binding Time}" Width="80"/>
                             <DataGridTextColumn Header="Comando" Binding="{Binding Command}" Width="*"/>
                             <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="220"/>

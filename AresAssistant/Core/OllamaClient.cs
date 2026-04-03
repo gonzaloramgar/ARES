@@ -23,7 +23,8 @@ public class OllamaClient
         int numThread = 0,
         int numPredict = 512,
         int numBatch = 512,
-        string keepAlive = "30m")
+        string keepAlive = "30m",
+        CancellationToken cancellationToken = default)
     {
         var options = numThread > 0
             ? (object)new { num_ctx = numCtx, num_thread = numThread, num_predict = numPredict, num_batch = numBatch, temperature = 0.7, repeat_penalty = 1.1 }
@@ -58,10 +59,11 @@ public class OllamaClient
 
         var response = await _http.PostAsync(
             $"{BaseUrl}/api/chat",
-            new StringContent(json, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+            new StringContent(json, Encoding.UTF8, "application/json"),
+            cancellationToken).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
-        var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
 #if DEBUG
         WriteDebug("RESPONSE", body);
