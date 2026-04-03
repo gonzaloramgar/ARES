@@ -257,6 +257,11 @@ public class ChatViewModel : ViewModelBase
         InputText = "";
         IsBusy = true;
         _streamingMessage = null;
+        _toolExecutionActive = false;
+        _progressMessage = null;
+        _lastProgressText = "";
+        _lastProgressMessageUtc = DateTime.MinValue;
+        StatusText = "";
         _lastModelUsed = "";
 
         // Stop any in-progress speech when the user sends a new message
@@ -288,12 +293,21 @@ public class ChatViewModel : ViewModelBase
     private ChatMessage? _progressMessage;
     private DateTime _lastProgressMessageUtc = DateTime.MinValue;
     private string _lastProgressText = "";
+    private bool _toolExecutionActive;
 
     private void OnTokenReceived(string token)
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            _progressMessage = null;
+            // If we are already receiving final text, stop showing tool-progress chatter.
+            if (_toolExecutionActive)
+            {
+                _toolExecutionActive = false;
+                _progressMessage = null;
+                _lastProgressText = "";
+                _lastProgressMessageUtc = DateTime.MinValue;
+                StatusText = "";
+            }
 
             if (_streamingMessage == null)
             {
@@ -311,6 +325,8 @@ public class ChatViewModel : ViewModelBase
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
+            _toolExecutionActive = true;
+
             if (_streamingMessage != null)
             {
                 var partial = (_streamingMessage.Content ?? string.Empty).Trim();
@@ -338,7 +354,9 @@ public class ChatViewModel : ViewModelBase
             {
                 Messages.Add(new ChatMessage { Role = "assistant", Content = response, ModelUsed = _lastModelUsed });
             }
+
             StatusText = "";
+            _toolExecutionActive = false;
             _progressMessage = null;
             _lastProgressText = "";
             _lastProgressMessageUtc = DateTime.MinValue;
@@ -352,6 +370,13 @@ public class ChatViewModel : ViewModelBase
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
+            // Keep normal responses clean: show status only while tools are executing.
+            if (!_toolExecutionActive)
+            {
+                StatusText = "";
+                return;
+            }
+
             StatusText = status;
 
             if (!IsBusy || string.IsNullOrWhiteSpace(status))
@@ -370,7 +395,6 @@ public class ChatViewModel : ViewModelBase
         var statusChanged = !string.Equals(status, _lastProgressText, StringComparison.OrdinalIgnoreCase);
         var enoughTimeElapsed = (now - _lastProgressMessageUtc).TotalMilliseconds >= 1100;
 
-        // Emit frequent, readable progress updates during long operations.
         if (!statusChanged || !enoughTimeElapsed)
             return;
 
@@ -591,7 +615,6 @@ public class ChatViewModel : ViewModelBase
             .Take(5)
             .ToList();
 
-        UpcomingTasks.Clear();
         foreach (var item in upcoming)
         {
             var label = string.IsNullOrWhiteSpace(item.task.Description)

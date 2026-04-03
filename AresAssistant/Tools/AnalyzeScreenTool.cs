@@ -30,6 +30,8 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
         var question = args.TryGetValue("question", out var q) && !string.IsNullOrWhiteSpace(q?.ToString())
             ? q!.ToString()
             : "Describe lo que ves en la captura y destaca cualquier error importante.";
+        var cfg = configManager.Config;
+        var inferenceRequested = ResolveInferenceMode(question, cfg.VisionDefaultMode);
 
         Bitmap? capturedBmp = null;
         try
@@ -48,7 +50,6 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
         var imagesBase64 = BuildVisionImagesBase64(capturedBmp!);
         capturedBmp?.Dispose();
 
-        var cfg = configManager.Config;
         var installed = await client.GetInstalledModelsAsync();
         var candidates = BuildVisionCandidates(cfg, installed);
         if (candidates.Count == 0)
@@ -57,10 +58,16 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
                 "No encontré modelos multimodales instalados para visión. Instala uno local (por ejemplo moondream:latest o llava:7b) y vuelve a intentar.");
         }
 
-        var attemptPrompts = new[]
-        {
-            BuildAttemptPrompt(question, allowInference: false)
-        };
+        var attemptPrompts = inferenceRequested
+            ? new[]
+            {
+                BuildAttemptPrompt(question, allowInference: false),
+                BuildAttemptPrompt(question, allowInference: true)
+            }
+            : new[]
+            {
+                BuildAttemptPrompt(question, allowInference: false)
+            };
 
         foreach (var model in candidates)
         {
@@ -101,7 +108,8 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
                     if (string.IsNullOrWhiteSpace(text))
                         continue;
 
-                    return new ToolResult(true, $"[modelo: {model}]\n{CompactVisionResponse(text)}");
+                    var modeTag = inferenceRequested ? "inferencia" : "estricto";
+                    return new ToolResult(true, $"[modelo: {model} | modo: {modeTag}]\n{CompactVisionResponse(text)}");
                 }
                 catch
                 {
@@ -191,6 +199,28 @@ public class AnalyzeScreenTool(OllamaClient client, ConfigManager configManager)
             return basePrompt + "Si no tienes certeza, di 'no se aprecia con claridad' y no inventes.";
 
         return basePrompt + "Si haces una inferencia, márcala como 'probable'. Limita tu respuesta a 8 bullets.";
+    }
+
+    private static bool ResolveInferenceMode(string question, string? defaultMode)
+    {
+        var q = (question ?? string.Empty).ToLowerInvariant();
+
+        if (q.Contains("modo estricto")
+            || q.Contains("sin inferencia")
+            || q.Contains("solo visible")
+            || q.Contains("no infieras"))
+            return false;
+
+        if (q.Contains("modo inferencia")
+            || q.Contains("puedes inferir")
+            || q.Contains("haz inferencias")
+            || q.Contains("aunque no se vea")
+            || q.Contains("deduce")
+            || q.Contains("adivina")
+            || q.Contains("probable"))
+            return true;
+
+        return string.Equals(defaultMode, "inferencia", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string ForceSpanishOutput(string text)

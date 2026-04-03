@@ -136,10 +136,14 @@
 
                             <Border Background="#1419242e" BorderBrush="#2f3648" BorderThickness="1"
                                     CornerRadius="10" Padding="10,8" Margin="0,0,0,16">
-                                <TextBlock Text="Incluye: IA local multimodelo, voz, dashboard de productividad y tutorial final interactivo."
+                                <TextBlock Text="Incluye: IA local multimodelo, voz, dashboard de productividad y guía final."
                                            Foreground="{DynamicResource TextBrush}" FontSize="11" FontFamily="Consolas"
                                            TextWrapping="Wrap" TextAlignment="Center"/>
                             </Border>
+
+                            <TextBlock Text="Todos estos ajustes se pueden cambiar después en Configuración."
+                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}" HorizontalAlignment="Center"
+                                       FontFamily="Consolas" Margin="0,0,0,14" TextWrapping="Wrap" TextAlignment="Center"/>
 
                             <!-- Name -->
                                 <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
@@ -153,7 +157,7 @@
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <TextBlock Text="¿Cómo quieres que se llame tu IA?"
-                                               FontSize="11" Foreground="#808080" FontFamily="Consolas" Margin="0,0,0,10"/>
+                                               FontSize="11" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,10"/>
                                     <TextBox x:Name="NameBox" Style="{StaticResource AresTextBox}"
                                              Text="ARES" FontSize="16" FontFamily="Consolas"
                                              MaxLength="20"/>
@@ -167,7 +171,7 @@
                 <Grid x:Name="Page1" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
-                            <TextBlock Text="🎨  APARIENCIA" FontSize="20" FontWeight="Bold"
+                            <TextBlock Text="APARIENCIA" FontSize="20" FontWeight="Bold"
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Personaliza el aspecto de ARES"
@@ -255,7 +259,7 @@
                 <Grid x:Name="Page2" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
-                            <TextBlock Text="🤖  INTELIGENCIA ARTIFICIAL" FontSize="20" FontWeight="Bold"
+                            <TextBlock Text="INTELIGENCIA ARTIFICIAL" FontSize="20" FontWeight="Bold"
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Personalidad, rendimiento y modelo de IA"
@@ -370,7 +374,7 @@
                                             <TextBlock x:Name="HwCpuText" Text="CPU: detectando..."
                                                        FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"/>
                                             <TextBlock x:Name="HwRamText" Text="RAM: detectando..."
-                                                       FontSize="10" Foreground="#808080" FontFamily="Consolas" Margin="0,3,0,0"/>
+                                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,3,0,0"/>
                                             <TextBlock x:Name="HwRecommendText" Text=""
                                                        FontSize="10" Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas"
                                                        FontWeight="Bold" Margin="0,5,0,0"/>
@@ -441,7 +445,7 @@
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <TextBlock Text="Descarga e instala Ollama y el modelo de IA seleccionado automáticamente"
-                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,0,0,12"
+                                               FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"
                                                TextWrapping="Wrap"/>
                                         <StackPanel Orientation="Horizontal">
                                         <Button x:Name="SetupInstallOllama" Content="⬇  Instalar todo"
@@ -458,7 +462,7 @@
                                             Margin="8,0,0,0"
                                             Click="SetupRepairAllAi_Click"/>
                                         <TextBlock x:Name="OllamaInstallStatus" Text=""
-                                                   FontSize="10" Foreground="#808080" FontFamily="Consolas"
+                                                   FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"
                                                    VerticalAlignment="Center" Margin="14,0,0,0"
                                                    TextWrapping="Wrap"/>
                                     </StackPanel>
@@ -484,7 +488,7 @@
                 <Grid x:Name="Page5" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
-                            <TextBlock Text="🖥  SISTEMA" FontSize="20" FontWeight="Bold"
+                            <TextBlock Text="SISTEMA" FontSize="20" FontWeight="Bold"
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Comportamiento y atajos del sistema"
@@ -592,7 +596,7 @@
                 <Grid x:Name="Page4" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
-                            <TextBlock Text="🔊  VOZ DEL ASISTENTE" FontSize="20" FontWeight="Bold"
+                            <TextBlock Text="VOZ DEL ASISTENTE" FontSize="20" FontWeight="Bold"
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Configura cómo habla tu asistente"
@@ -613,7 +617,7 @@
                                     <CheckBox x:Name="ChkVoice" Style="{StaticResource AresCheckBox}"
                                               Content="Leer respuestas en voz alta" IsChecked="True"/>
                                     <TextBlock Text="ARES leerá sus respuestas usando síntesis de voz neuronal"
-                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,6,0,0"/>
+                                               FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,6,0,0"/>
                                 </StackPanel>
                             </Border>
 
@@ -708,7 +712,7 @@
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <TextBlock Text="Descarga las voces neuronales Piper para usar sin conexión (~140 MB total)"
-                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,0,0,12"
+                                               FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"
                                                TextWrapping="Wrap"/>
                                     <StackPanel Orientation="Horizontal">
                                         <Button x:Name="SetupDownloadPiper" Content="⬇  Descargar voces offline"
@@ -718,7 +722,7 @@
                                                 FontFamily="Consolas" FontSize="12"
                                                 Click="SetupDownloadPiper_Click"/>
                                         <TextBlock x:Name="PiperDownloadStatus" Text=""
-                                                   FontSize="10" Foreground="#808080" FontFamily="Consolas"
+                                                   FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"
                                                    VerticalAlignment="Center" Margin="14,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -736,7 +740,7 @@
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <TextBlock Text="Escucha cómo suena tu asistente con la configuración actual"
-                                               FontSize="10" Foreground="#606060" FontFamily="Consolas" Margin="0,0,0,12"/>
+                                               FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"/>
                                     <Button x:Name="SetupTestVoice" Content="▶  Probar voz"
                                             Style="{StaticResource GhostButton}"
                                             Height="34" Padding="20,0"
@@ -753,7 +757,7 @@
                 <Grid x:Name="Page6" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
                         <StackPanel HorizontalAlignment="Center" Margin="50,14,50,10">
-                            <TextBlock Text="🚀  TUTORIAL ARES" FontSize="20" FontWeight="Bold"
+                            <TextBlock Text="TUTORIAL ARES" FontSize="20" FontWeight="Bold"
                                        Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center"
                                        FontFamily="Consolas" Margin="0,0,0,6"/>
                             <TextBlock Text="Esto es lo que ARES puede hacer y para qué sirve cada ajuste"
@@ -814,15 +818,24 @@
                     </LinearGradientBrush>
                 </Border.Background>
                 <Grid>
-                    <Border VerticalAlignment="Top" Height="1" Background="#1a1a1a" Margin="-24,0"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- Step label -->
-                    <TextBlock x:Name="StepLabel" Text="Paso 1 de 6" FontSize="11"
-                               Foreground="#707895" FontFamily="Consolas"
-                               HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,6,0,0"/>
+                    <Border Grid.Row="0" Height="1" Background="#1a1a1a" Margin="-24,0"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                VerticalAlignment="Bottom" Margin="0,20,0,0">
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,8,0,8">
+                        <TextBlock x:Name="StepLabel" Text="Paso 1 de 6" FontSize="11"
+                                   Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas"
+                                   HorizontalAlignment="Center" TextAlignment="Center"/>
+                        <TextBlock x:Name="StepContextLabel" Text="Define la identidad inicial del asistente"
+                                   FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Opacity="0.9"
+                                   HorizontalAlignment="Center" TextAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,0">
                         <Button x:Name="BtnBack" Content="← ATRÁS"
                                 Style="{StaticResource GhostButton}"
                             Width="134" Height="40"

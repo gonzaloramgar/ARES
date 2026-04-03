@@ -15,6 +15,26 @@ namespace AresAssistant.Views;
 public partial class SetupWindow : Window
 {
     private const int TotalPages = 6;
+    private static readonly string[] StepTitles =
+    [
+        "Identidad",
+        "Voz",
+        "IA",
+        "Apariencia",
+        "Sistema",
+        "Final"
+    ];
+
+    private static readonly string[] StepHints =
+    [
+        "Define el nombre y contexto inicial del asistente",
+        "Ajusta la voz, volumen y prueba de audio",
+        "Configura personalidad, rendimiento y modelo",
+        "Personaliza estilo visual, tamaño y posición",
+        "Establece atajos, comportamiento y widgets",
+        "Revisión rápida de capacidades y arranque"
+    ];
+
     private static System.Windows.Point? _lastSessionPosition;
     private double _ollamaProgressPct;
 
@@ -217,9 +237,11 @@ public partial class SetupWindow : Window
     private void UpdateNavigation()
     {
         BtnBack.Visibility = _currentPage > 0 ? Visibility.Visible : Visibility.Collapsed;
-        BtnNext.Content = _currentPage == TotalPages - 1 ? "✦  COMENZAR" : "SIGUIENTE →";
+        BtnNext.Content = _currentPage == TotalPages - 1 ? "COMENZAR" : "CONTINUAR →";
 
-        StepLabel.Text = $"Paso {_currentPage + 1} de {TotalPages}";
+        var safeIndex = Math.Clamp(_currentPage, 0, TotalPages - 1);
+        StepLabel.Text = $"Paso {safeIndex + 1} de {TotalPages} · {StepTitles[safeIndex]}";
+        StepContextLabel.Text = StepHints[safeIndex];
 
         // Update dots
         var accent = (SolidColorBrush)FindResource("AccentBrush");

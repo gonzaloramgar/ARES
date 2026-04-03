@@ -21,13 +21,17 @@
             <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#c808080d"/>
             <SolidColorBrush x:Key="BackgroundBrush" Color="#08080d"/>
             <SolidColorBrush x:Key="SurfaceBrush" Color="#0d0d16"/>
-            <SolidColorBrush x:Key="SurfaceLightBrush" Color="#141420"/>
-            <SolidColorBrush x:Key="TextBrush" Color="#f0f0f8"/>
-            <SolidColorBrush x:Key="SubtextBrush" Color="#686880"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="#22222e"/>
+            <SolidColorBrush x:Key="SurfaceLightBrush" Color="#171a28"/>
+            <SolidColorBrush x:Key="TextBrush" Color="#f5f7ff"/>
+            <SolidColorBrush x:Key="SubtextBrush" Color="#9aa3c0"/>
+            <SolidColorBrush x:Key="BorderBrush" Color="#32374b"/>
             <!-- Glass surface brushes for futuristic panels -->
             <SolidColorBrush x:Key="GlassBrush" Color="#1a141428"/>
             <SolidColorBrush x:Key="GlassBorderBrush" Color="#22ffffff"/>
+
+            <!-- Global font families -->
+            <FontFamily x:Key="UiFontFamily">Segoe UI</FontFamily>
+            <FontFamily x:Key="MonoFontFamily">Consolas</FontFamily>
 
             <!-- Font sizes -->
             <sys:Double x:Key="FontSizeNormal" xmlns:sys="clr-namespace:System;assembly=mscorlib">14</sys:Double>
@@ -41,7 +45,7 @@
                 <Setter Property="BorderBrush" Value="#22222e"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Foreground" Value="#f0f0f8"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="13"/>
                 <Setter Property="Padding" Value="2"/>
                 <Setter Property="HasDropShadow" Value="True"/>
@@ -64,7 +68,7 @@
 
             <Style x:Key="DarkMenuItem" TargetType="MenuItem">
                 <Setter Property="Foreground" Value="#f0f0f8"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="13"/>
                 <Setter Property="Padding" Value="10,7"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -92,8 +96,18 @@
             <!-- Global styles -->
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            </Style>
+
+            <Style TargetType="Control">
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
+                <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
             </Style>
 
             <!-- Global tooltip style to avoid default white system popup -->
@@ -103,7 +117,7 @@
                 <Setter Property="BorderBrush" Value="#2f3f62"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="8,5"/>
-                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="11"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -125,7 +139,7 @@
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Padding" Value="16,7"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -182,7 +196,7 @@
                 <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="12,6"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
@@ -221,7 +235,7 @@
                 <Setter Property="TextAlignment" Value="Left"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="VerticalContentAlignment" Value="Top"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
                 <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}"/>
@@ -318,7 +332,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
                 <Setter Property="Padding" Value="10,6"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -348,7 +362,7 @@
                 <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="10,7"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -435,7 +449,7 @@
             <!-- CheckBox dark theme -->
             <Style x:Key="AresCheckBox" TargetType="CheckBox">
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">

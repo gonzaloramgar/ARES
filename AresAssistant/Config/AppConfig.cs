@@ -21,6 +21,8 @@ public record AppConfig
     public string MultiModelReasoningModel { get; init; } = "qwen2.5:3b";
     /// <summary>Preferred local model for vision/screenshot tasks.</summary>
     public string MultiModelVisionModel { get; init; } = "moondream:latest";
+    /// <summary>Default vision analysis mode: "estricto" or "inferencia".</summary>
+    public string VisionDefaultMode { get; init; } = "estricto";
     /// <summary>Comma-separated local fallback models used if primary fails.</summary>
     public string MultiModelFallbacks { get; init; } = "qwen2.5:3b,qwen2.5-coder:3b,moondream:latest";
     public string AssistantName { get; init; } = "ARES";

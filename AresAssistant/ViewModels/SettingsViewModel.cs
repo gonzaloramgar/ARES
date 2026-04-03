@@ -23,6 +23,7 @@ public class SettingsViewModel : ViewModelBase
     private string _multiModelCodingModel;
     private string _multiModelReasoningModel;
     private string _multiModelVisionModel;
+    private string _visionDefaultMode;
     private string _multiModelFallbacks;
     private string _assistantName;
     private string _personality;
@@ -75,6 +76,7 @@ public class SettingsViewModel : ViewModelBase
     public string MultiModelCodingModel { get => _multiModelCodingModel; set => SetField(ref _multiModelCodingModel, value); }
     public string MultiModelReasoningModel { get => _multiModelReasoningModel; set => SetField(ref _multiModelReasoningModel, value); }
     public string MultiModelVisionModel { get => _multiModelVisionModel; set => SetField(ref _multiModelVisionModel, value); }
+    public string VisionDefaultMode { get => _visionDefaultMode; set => SetField(ref _visionDefaultMode, value); }
     public string MultiModelFallbacks { get => _multiModelFallbacks; set => SetField(ref _multiModelFallbacks, value); }
     public string AssistantName { get => _assistantName; set => SetField(ref _assistantName, value); }
     public string Personality { get => _personality; set => SetField(ref _personality, value); }
@@ -149,6 +151,7 @@ public class SettingsViewModel : ViewModelBase
         _multiModelCodingModel = cfg.MultiModelCodingModel;
         _multiModelReasoningModel = cfg.MultiModelReasoningModel;
         _multiModelVisionModel = cfg.MultiModelVisionModel;
+        _visionDefaultMode = string.IsNullOrWhiteSpace(cfg.VisionDefaultMode) ? "estricto" : cfg.VisionDefaultMode;
         _multiModelFallbacks = cfg.MultiModelFallbacks;
         _assistantName = cfg.AssistantName;
         _personality = cfg.Personality;
@@ -195,6 +198,7 @@ public class SettingsViewModel : ViewModelBase
         MultiModelCodingModel = MultiModelCodingModel,
         MultiModelReasoningModel = MultiModelReasoningModel,
         MultiModelVisionModel = MultiModelVisionModel,
+        VisionDefaultMode = VisionDefaultMode,
         MultiModelFallbacks = MultiModelFallbacks,
         AssistantName = AssistantName,
         Personality = Personality,

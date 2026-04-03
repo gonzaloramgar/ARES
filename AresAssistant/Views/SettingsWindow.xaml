@@ -301,6 +301,23 @@
                                                 <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelVisionModel, UpdateSourceTrigger=PropertyChanged}"/>
                                             </StackPanel>
                                         </Grid>
+                                        <Grid Margin="0,8,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="280"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                                <TextBlock Text="Modo visión predeterminado" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
+                                                <ComboBox SelectedValue="{Binding VisionDefaultMode}" SelectedValuePath="Tag">
+                                                    <ComboBoxItem Content="Estricto (solo visible)" Tag="estricto"/>
+                                                    <ComboBoxItem Content="Inferencia (marcada como probable)" Tag="inferencia"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Este es el control del modo de visión. Puedes forzar uno distinto al preguntar: 'modo estricto' o 'modo inferencia'."
+                                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}"
+                                                       VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </Grid>
                                         <TextBlock Text="Fallbacks (coma):" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,8,0,4"/>
                                         <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelFallbacks, UpdateSourceTrigger=PropertyChanged}"/>
                                     </StackPanel>
