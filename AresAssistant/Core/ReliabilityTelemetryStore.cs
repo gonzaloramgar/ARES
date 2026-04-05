@@ -4,9 +4,14 @@ namespace AresAssistant.Core;
 
 public sealed class ReliabilityTelemetryStore
 {
+    private const int FlushIntervalSeconds = 5;
+    private const int MaxPendingEvents = 20;
+
     private readonly string _path;
     private readonly object _lock = new();
     private ReliabilityTelemetrySnapshot _snapshot = new();
+    private DateTime _lastSaveUtc = DateTime.MinValue;
+    private int _pendingEvents;
 
     public bool Enabled { get; set; }
 
@@ -31,7 +36,7 @@ public sealed class ReliabilityTelemetryStore
             if (success) stat.Success++; else stat.Failed++;
             stat.LastElapsedMs = elapsedMs;
             stat.LastSeenUtc = DateTime.UtcNow;
-            Save();
+            MarkDirtyAndMaybeFlushLocked();
         }
     }
 
@@ -47,7 +52,7 @@ public sealed class ReliabilityTelemetryStore
             if (success) stat.Success++; else stat.Failed++;
             stat.LastElapsedMs = elapsedMs;
             stat.LastSeenUtc = DateTime.UtcNow;
-            Save();
+            MarkDirtyAndMaybeFlushLocked();
         }
     }
 
@@ -109,7 +114,7 @@ public sealed class ReliabilityTelemetryStore
     {
         if (!File.Exists(_path))
         {
-            Save();
+            SaveLocked();
             return;
         }
 
@@ -121,14 +126,26 @@ public sealed class ReliabilityTelemetryStore
         catch
         {
             _snapshot = new ReliabilityTelemetrySnapshot();
-            Save();
+            SaveLocked();
         }
     }
 
-    private void Save()
+    private void MarkDirtyAndMaybeFlushLocked()
+    {
+        _pendingEvents++;
+
+        var now = DateTime.UtcNow;
+        var elapsed = (now - _lastSaveUtc).TotalSeconds;
+        if (_pendingEvents >= MaxPendingEvents || elapsed >= FlushIntervalSeconds)
+            SaveLocked();
+    }
+
+    private void SaveLocked()
     {
         var json = JsonConvert.SerializeObject(_snapshot, Formatting.Indented);
         File.WriteAllText(_path, json);
+        _lastSaveUtc = DateTime.UtcNow;
+        _pendingEvents = 0;
     }
 }
 

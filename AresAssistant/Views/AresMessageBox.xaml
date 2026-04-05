@@ -45,18 +45,21 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header: icon + title -->
+                <!-- Header: brand icon + title -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,14">
-                    <Path x:Name="IconPath"
-                          Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
-                          Fill="{DynamicResource AccentBrush}" Width="13" Height="19"
-                          Margin="0,0,10,0" VerticalAlignment="Center">
-                        <Path.Effect>
-                            <DropShadowEffect Color="#ff2222" BlurRadius="8" ShadowDepth="0" Opacity="0.55"/>
-                        </Path.Effect>
-                    </Path>
+                    <Grid Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <Ellipse Width="20" Height="20" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1" Opacity="0.45"/>
+                        <Path Data="M 6,0 L 12,9 L 6,18 L 0,9 Z"
+                              Width="9" Height="14" Stretch="Fill"
+                              Fill="{DynamicResource AccentBrush}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path.Effect>
+                                <DropShadowEffect Color="{DynamicResource AccentMediaColor}" BlurRadius="10" ShadowDepth="0" Opacity="0.65"/>
+                            </Path.Effect>
+                        </Path>
+                    </Grid>
                     <TextBlock x:Name="TitleText" Text="ARES"
-                               FontSize="14" FontWeight="Bold"
+                               FontSize="15" FontWeight="Bold"
                                Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas"
                                VerticalAlignment="Center"/>
                 </StackPanel>

@@ -63,7 +63,7 @@
                         Background="#14100a0a" BorderBrush="#33cc3333"
                         BorderThickness="1" CornerRadius="10" Padding="16,14">
                     <StackPanel>
-                        <TextBlock Text="⚠  Esta acción eliminará permanentemente:"
+                        <TextBlock Text="Atención: esta acción eliminará permanentemente:"
                                    FontSize="13" Foreground="{DynamicResource TextBrush}"
                                    FontWeight="SemiBold" Margin="0,0,0,12"/>
                         <TextBlock Foreground="#cc8888" FontSize="11" FontFamily="Consolas" Margin="4,0,0,0" LineHeight="20">

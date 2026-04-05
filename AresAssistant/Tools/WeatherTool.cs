@@ -29,7 +29,7 @@ public class WeatherTool : ITool
     };
 
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
-    private static readonly WeatherCacheStore Cache = new("data/weather-cache.json");
+    private static readonly WeatherCacheStore Cache = new(AppPaths.WeatherCacheFile);
 
     public async Task<ToolResult> ExecuteAsync(Dictionary<string, JToken> args)
     {

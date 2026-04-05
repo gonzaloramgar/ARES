@@ -103,7 +103,7 @@ public class ToolRegistry
         Dictionary<string, string> appPaths,
         Dictionary<string, string> appDisplayNames)
     {
-        const string customFile = "data/custom-apps.json";
+        var customFile = AppPaths.CustomAppsFile;
         if (!File.Exists(customFile)) return;
 
         try

@@ -67,7 +67,7 @@ public partial class ModelDownloadWindow : Window
             else if (status.Contains("verifying"))
                 TxtStatus.Text = "Verificando integridad...";
             else if (status == "success")
-                TxtStatus.Text = "✓ Descarga completada";
+                TxtStatus.Text = "Descarga completada";
             else if (!string.IsNullOrEmpty(status))
                 TxtStatus.Text = status;
         });

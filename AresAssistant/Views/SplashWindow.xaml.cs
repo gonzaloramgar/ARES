@@ -10,6 +10,7 @@ public partial class SplashWindow : Window
 {
     private readonly bool _isFirstLaunch;
     private readonly SplashViewModel _vm = new();
+    private static readonly TimeSpan ScanRefreshInterval = TimeSpan.FromHours(12);
 
     public SplashWindow(bool isFirstLaunch)
     {
@@ -23,9 +24,18 @@ public partial class SplashWindow : Window
     {
         try
         {
-            // Always re-scan so new apps / Steam games / desktop shortcuts are detected
-            await RunFirstLaunchScanAsync();
-            await EnsureRequiredModelsAsync();
+            if (ShouldRunBlockingScan())
+            {
+                await RunFirstLaunchScanAsync();
+            }
+            else
+            {
+                UpdateStatus("Cargando catálogo guardado...", 88);
+                _ = RunDeferredRefreshScanAsync();
+                await Task.Delay(60);
+            }
+
+            await EnsureRequiredModelsAsync(interactive: _isFirstLaunch);
 
             // Keep progress below 100 while MainWindow is being constructed (heavy init).
             // This avoids the perception of a frozen "100% listo" splash.
@@ -48,7 +58,7 @@ public partial class SplashWindow : Window
             {
                 App.WriteCrash("OpenMainWindow", ex2);
                 AresMessageBox.Show(
-                    $"Error crítico al iniciar ARES:\n\n{ex2.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
+                    $"Error crítico al iniciar ARES:\n\n{ex2.Message}\n\nRevisa los archivos crash_*.log en:\n{AppPaths.DataDirectory}",
                     "ARES — Error");
                 Application.Current.Shutdown(1);
             }
@@ -73,10 +83,50 @@ public partial class SplashWindow : Window
         };
 
         var tools = await scanner.ScanAsync();
-        SystemScanner.SaveToJson(tools, "data/tools.json");
+        SystemScanner.SaveToJson(tools, AppPaths.ToolsFile);
 
         UpdateStatus("Escaneo completado. Verificando modelos locales...", 94);
         await Task.Delay(180);
+    }
+
+    private async Task RunDeferredRefreshScanAsync()
+    {
+        try
+        {
+            var scanner = new SystemScanner();
+            var tools = await scanner.ScanAsync();
+            SystemScanner.SaveToJson(tools, AppPaths.ToolsFile);
+
+            // Best effort: hot-reload scanned tools if the main registry is already initialized.
+            await Dispatcher.InvokeAsync(() =>
+            {
+                if (MainWindow.ToolRegistry != null)
+                    MainWindow.ToolRegistry.LoadFromJson(AppPaths.ToolsFile);
+            });
+        }
+        catch (Exception ex)
+        {
+            App.WriteCrash("SplashWindow.RunDeferredRefreshScanAsync", ex);
+        }
+    }
+
+    private bool ShouldRunBlockingScan()
+    {
+        if (_isFirstLaunch)
+            return true;
+
+        if (!File.Exists(AppPaths.ToolsFile))
+            return true;
+
+        try
+        {
+            var age = DateTime.UtcNow - File.GetLastWriteTimeUtc(AppPaths.ToolsFile);
+            return age > ScanRefreshInterval;
+        }
+        catch
+        {
+            return true;
+        }
     }
 
     private void UpdateStatus(string text, int progress)
@@ -95,7 +145,7 @@ public partial class SplashWindow : Window
         Close();
     }
 
-    private async Task EnsureRequiredModelsAsync()
+    private async Task EnsureRequiredModelsAsync(bool interactive)
     {
         var cfg = App.ConfigManager.Config;
 
@@ -112,9 +162,12 @@ public partial class SplashWindow : Window
 
         if (!ready)
         {
-            AresMessageBox.Show(
-                "Ollama no está disponible al iniciar, no pude verificar modelos.\n\nAbre Ajustes > IA para instalar modelos requeridos.",
-                "ARES — Verificación de modelos");
+            if (interactive)
+            {
+                AresMessageBox.Show(
+                    "Ollama no está disponible al iniciar, no pude verificar modelos.\n\nAbre Ajustes > IA para instalar modelos requeridos.",
+                    "ARES — Verificación de modelos");
+            }
             return;
         }
 
@@ -123,6 +176,12 @@ public partial class SplashWindow : Window
         if (missing.Count == 0)
         {
             UpdateStatus("Modelos locales verificados.", 99);
+            return;
+        }
+
+        if (!interactive)
+        {
+            UpdateStatus("Modelos de IA pendientes (revisar en Ajustes > IA)", 99);
             return;
         }
 

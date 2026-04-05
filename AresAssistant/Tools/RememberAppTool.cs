@@ -51,7 +51,7 @@ public class RememberAppTool : ITool
             return Task.FromResult(new ToolResult(false, "Error al guardar la app en memoria."));
 
         // Hot-reload: re-read tools.json + custom apps so open_app finds it immediately
-        _registry.LoadFromJson("data/tools.json");
+        _registry.LoadFromJson(AppPaths.ToolsFile);
 
         return Task.FromResult(new ToolResult(true,
             $"'{name}' guardado en memoria. Ahora puedo abrirlo con open_app siempre que quieras."));

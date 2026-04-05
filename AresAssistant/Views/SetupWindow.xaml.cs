@@ -494,11 +494,11 @@ public partial class SetupWindow : Window
         if (_warmUpTask != null)
         {
             SetupTestVoice.IsEnabled = false;
-            SetupTestVoice.Content = "⏳  Preparando...";
+            SetupTestVoice.Content = "Preparando...";
             await _warmUpTask;
             _warmUpTask = null;
             SetupTestVoice.IsEnabled = true;
-            SetupTestVoice.Content = "▶  Probar voz";
+            SetupTestVoice.Content = "Probar voz";
         }
 
         _testSpeech.Speak("Hola, soy ARES. Esta es una prueba de voz.");
@@ -518,8 +518,8 @@ public partial class SetupWindow : Window
         SetupRepairAllAi.IsEnabled = false;
         OllamaProgressBorder.Visibility = Visibility.Visible;
 
-        SetupInstallOllama.Content = repairMode ? "🔧  Reparando..." : "⏳  Instalando...";
-        SetupRepairAllAi.Content = repairMode ? "🔧  Reparando..." : "🛠  Reparar IA";
+        SetupInstallOllama.Content = repairMode ? "Reparando..." : "Instalando...";
+        SetupRepairAllAi.Content = repairMode ? "Reparando..." : "Reparar IA";
 
         var model = SelectedModel;
         var requiredModels = new[]
@@ -564,8 +564,8 @@ public partial class SetupWindow : Window
                         SetupInstallOllama.IsEnabled = true;
                         SetupRepairAllAi.IsEnabled = true;
                         OllamaProgressBorder.Visibility = Visibility.Collapsed;
-                        SetupInstallOllama.Content = "⬇  Instalar todo";
-                        SetupRepairAllAi.Content = "🛠  Reparar IA";
+                        SetupInstallOllama.Content = "Instalar todo";
+                        SetupRepairAllAi.Content = "Reparar IA";
                         return;
                     }
                     ollamaReady = true;
@@ -594,8 +594,8 @@ public partial class SetupWindow : Window
                         SetupInstallOllama.IsEnabled = true;
                         SetupRepairAllAi.IsEnabled = true;
                         OllamaProgressBorder.Visibility = Visibility.Collapsed;
-                        SetupInstallOllama.Content = "⬇  Instalar todo";
-                        SetupRepairAllAi.Content = "🛠  Reparar IA";
+                        SetupInstallOllama.Content = "Instalar todo";
+                        SetupRepairAllAi.Content = "Reparar IA";
                         return;
                     }
 
@@ -607,8 +607,8 @@ public partial class SetupWindow : Window
                         SetupInstallOllama.IsEnabled = true;
                         SetupRepairAllAi.IsEnabled = true;
                         OllamaProgressBorder.Visibility = Visibility.Collapsed;
-                        SetupInstallOllama.Content = "⬇  Instalar todo";
-                        SetupRepairAllAi.Content = "🛠  Reparar IA";
+                        SetupInstallOllama.Content = "Instalar todo";
+                        SetupRepairAllAi.Content = "Reparar IA";
                         return;
                     }
                 }
@@ -619,10 +619,10 @@ public partial class SetupWindow : Window
             // Done
             SetProgress(1.0);
             await Dispatcher.InvokeAsync(() => SetProgress(1.0));
-            SetStatus($"✓ Ollama + modelos listos ({string.Join(", ", requiredModels)})");
+            SetStatus($"Ollama + modelos listos ({string.Join(", ", requiredModels)})");
             OllamaInstallStatus.Foreground = (SolidColorBrush)FindResource("AccentBrush");
-            SetupInstallOllama.Content = "✓  Instalado";
-            SetupRepairAllAi.Content = "✓  Reparar IA";
+            SetupInstallOllama.Content = "Instalado";
+            SetupRepairAllAi.Content = "Reparar IA";
 
 
         }
@@ -630,8 +630,8 @@ public partial class SetupWindow : Window
         {
             SetStatus($"Error: {ex.Message}");
             OllamaInstallStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xff, 0x44, 0x44));
-            SetupInstallOllama.Content = "⬇  Instalar todo";
-            SetupRepairAllAi.Content = "🛠  Reparar IA";
+            SetupInstallOllama.Content = "Instalar todo";
+            SetupRepairAllAi.Content = "Reparar IA";
             SetupInstallOllama.IsEnabled = true;
             SetupRepairAllAi.IsEnabled = true;
             return;
@@ -652,7 +652,7 @@ public partial class SetupWindow : Window
     private async void SetupDownloadPiper_Click(object sender, RoutedEventArgs e)
     {
         SetupDownloadPiper.IsEnabled = false;
-        SetupDownloadPiper.Content = "⏳  Descargando...";
+        SetupDownloadPiper.Content = "Descargando...";
         PiperDownloadStatus.Text = "Descargando voces Piper...";
 
         try
@@ -661,15 +661,15 @@ public partial class SetupWindow : Window
             await speech.DownloadPiperAsync();
             speech.Dispose();
 
-            PiperDownloadStatus.Text = "✓ Voces offline instaladas";
+            PiperDownloadStatus.Text = "Voces offline instaladas";
             PiperDownloadStatus.Foreground = (SolidColorBrush)FindResource("AccentBrush");
-            SetupDownloadPiper.Content = "✓  Descargado";
+            SetupDownloadPiper.Content = "Descargado";
         }
         catch
         {
             PiperDownloadStatus.Text = "Error — reintenta más tarde";
             PiperDownloadStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xff, 0x44, 0x44));
-            SetupDownloadPiper.Content = "⬇  Descargar voces offline";
+            SetupDownloadPiper.Content = "Descargar voces offline";
             SetupDownloadPiper.IsEnabled = true;
         }
     }

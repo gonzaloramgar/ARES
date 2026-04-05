@@ -35,7 +35,7 @@ public sealed class SpeechEngine : IDisposable
     private const string PiperVoiceFemaleBaseUrl =
         "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/es/es_ES/sharvard/medium/";
 
-    private static readonly string TtsDir   = Path.Combine("data", "tts");
+    private static readonly string TtsDir   = AppPaths.TtsDirectory;
     private static readonly string PiperExe = Path.Combine(TtsDir, "piper", "piper.exe");
 
     private static readonly string VoiceModelMale    = Path.Combine(TtsDir, $"{PiperVoiceMaleName}.onnx");

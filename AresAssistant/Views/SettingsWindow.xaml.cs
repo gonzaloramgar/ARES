@@ -12,27 +12,51 @@ namespace AresAssistant.Views;
 public partial class SettingsWindow : Window
 {
     private readonly SettingsViewModel _vm;
+    private bool _loadedOnce;
+    private bool _isClosed;
 
     public SettingsWindow()
     {
         InitializeComponent();
         _vm = new SettingsViewModel(App.ConfigManager, new OllamaClient());
         DataContext = _vm;
-        Loaded += async (_, _) =>
-        {
-            await _vm.CheckOllamaAsync();
-            await _vm.DetectHardwareAsync();
-            _vm.RefreshTtsStatus();
+        Loaded += OnLoaded;
+        Closed += OnClosed;
+    }
+
+    private async void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_loadedOnce)
+            return;
+
+        _loadedOnce = true;
+        _vm.RefreshTtsStatus();
+
+        // Run non-visual checks in parallel after first render to improve perceived opening speed.
+        await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+        await Task.WhenAll(_vm.CheckOllamaAsync(), _vm.DetectHardwareAsync());
+
+        if (!_isClosed)
             await RefreshAiHealthPanelAsync();
-        };
+    }
+
+    private void OnClosed(object? sender, EventArgs e)
+    {
+        _isClosed = true;
+        Loaded -= OnLoaded;
+        Closed -= OnClosed;
     }
 
     private async Task RefreshAiHealthPanelAsync()
     {
+        if (_isClosed) return;
+
         try
         {
             var checker = new OllamaHealthChecker();
             var report = await checker.CheckAsync(new OllamaClient(), _vm.BuildConfig());
+            if (_isClosed) return;
+
             AiHealthSummaryText.Text = report.Status switch
             {
                 OllamaHealthStatus.Healthy => "SALUD IA: OK · Ollama y modelos listos",
@@ -44,6 +68,7 @@ public partial class SettingsWindow : Window
         }
         catch
         {
+            if (_isClosed) return;
             AiHealthSummaryText.Text = "SALUD IA: no se pudo verificar";
         }
     }
@@ -165,20 +190,57 @@ public partial class SettingsWindow : Window
 
     private async Task<(string Report, List<string> MissingRouting, bool NeedsVisionModel, string PreferredVisionModel)> BuildRoutingDiagnosticDataAsync()
     {
-        var preview = await _vm.BuildMultiModelRoutingPreviewAsync();
-        var missingRouting = await _vm.GetMissingPreferredModelsAsync();
+        var cfg = _vm.BuildConfig();
+        var ollama = new OllamaClient();
+        var installed = await ollama.GetInstalledModelsAsync();
+        var missingRouting = ModelRouter.GetMissingPreferredModels(cfg, installed)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        string RouteStatus(string title, string prompt)
+        {
+            var cands = ModelRouter.BuildCandidates(prompt, cfg, installed);
+            if (cands.Count == 0)
+                return $"{title}: sin candidatos";
+
+            var primary = cands[0];
+            var primaryInstalled = installed.Any(i => i.Equals(primary, StringComparison.OrdinalIgnoreCase));
+            var chain = string.Join(" -> ", cands);
+            return $"{title}: {chain}{Environment.NewLine}  Primario: {primary} {(primaryInstalled ? "✓" : "✗")}";
+        }
+
+        var preview = string.Join(
+            Environment.NewLine,
+            "Diagnóstico de routing multimodelo (solo lectura)",
+            "Este botón NO ejecuta prompts reales ni cambia configuración.",
+            $"Multimodelo activo: {(cfg.MultiModelEnabled ? "sí" : "no")}",
+            $"Modelos instalados: {(installed.Count == 0 ? "ninguno" : string.Join(", ", installed))}",
+            missingRouting.Count > 0
+                ? $"⚠ Faltan modelos preferidos: {string.Join(", ", missingRouting)}"
+                : "✓ Modelos preferidos disponibles.",
+            missingRouting.Count > 0
+                ? "   Puedes instalarlos directamente desde este mismo diagnóstico."
+                : string.Empty,
+            !cfg.MultiModelEnabled
+                ? "ℹ Con multimodelo desactivado, ARES usará OllamaModel + fallbacks configurados."
+                : string.Empty,
+            string.Empty,
+            RouteStatus("Coding", "Tengo un error de compilación en C# y un stack trace"),
+            string.Empty,
+            RouteStatus("Reasoning", "Ayúdame a planificar las tareas de hoy"),
+            string.Empty,
+            RouteStatus("Visión", "¿Qué hay en esta captura de pantalla?")
+        ).TrimEnd();
 
         var preferredVision = string.IsNullOrWhiteSpace(_vm.MultiModelVisionModel)
             ? "moondream:latest"
             : _vm.MultiModelVisionModel;
 
-        var ollama = new OllamaClient();
-        var installed = await ollama.GetInstalledModelsAsync();
         var hasAnyVision = installed.Any(ModelRouter.IsLikelyVisionModel);
         var preferredVisionInstalled = installed.Any(m => m.Equals(preferredVision, StringComparison.OrdinalIgnoreCase));
         var needsVisionModel = !hasAnyVision || !preferredVisionInstalled;
         var healthChecker = new OllamaHealthChecker();
-        var health = await healthChecker.CheckAsync(ollama, _vm.BuildConfig());
+        var health = await healthChecker.CheckAsync(ollama, cfg);
 
         var sb = new System.Text.StringBuilder();
         sb.AppendLine($"Diagnóstico generado: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
@@ -189,8 +251,8 @@ public partial class SettingsWindow : Window
         sb.AppendLine($"Tool memory_read: {(MainWindow.ToolRegistry.Get("memory_read") != null ? "✓" : "✗")}");
         sb.AppendLine($"Tool schedule_simulate: {(MainWindow.ToolRegistry.Get("schedule_simulate") != null ? "✓" : "✗")}");
         sb.AppendLine($"Tool model_benchmark: {(MainWindow.ToolRegistry.Get("model_benchmark") != null ? "✓" : "✗")}");
-        sb.AppendLine($"API local: {(_vm.BuildConfig().LocalApiEnabled ? "habilitada" : "deshabilitada")}");
-        sb.AppendLine($"Plugins: {(_vm.BuildConfig().PluginToolsEnabled ? "habilitados" : "deshabilitados")}");
+        sb.AppendLine($"API local: {(cfg.LocalApiEnabled ? "habilitada" : "deshabilitada")}");
+        sb.AppendLine($"Plugins: {(cfg.PluginToolsEnabled ? "habilitados" : "deshabilitados")}");
         sb.AppendLine();
         sb.AppendLine(preview);
         sb.AppendLine();
@@ -532,8 +594,8 @@ public partial class SettingsWindow : Window
                 Dispatcher.Invoke(() => Title = $"ARES — {msg}");
 
             var tools = await scanner.ScanAsync();
-            SystemScanner.SaveToJson(tools, "data/tools.json");
-            MainWindow.ToolRegistry.LoadFromJson("data/tools.json");
+            SystemScanner.SaveToJson(tools, AppPaths.ToolsFile);
+            MainWindow.ToolRegistry.LoadFromJson(AppPaths.ToolsFile);
 
             Title = "ARES — Ajustes";
             AresMessageBox.Show($"Escaneo completado. {tools.Count} herramientas cargadas.", "ARES");
@@ -596,7 +658,7 @@ public partial class SettingsWindow : Window
 
         try
         {
-            var dataDir = Path.GetFullPath("data");
+            var dataDir = AppPaths.DataDirectory;
             if (Directory.Exists(dataDir))
             {
                 foreach (var file in Directory.GetFiles(dataDir, "*", SearchOption.AllDirectories))

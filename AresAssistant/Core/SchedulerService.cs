@@ -7,6 +7,7 @@ public sealed class SchedulerService
     private readonly ScheduledTaskStore _store;
     private readonly Func<ScheduledTaskItem, Task> _runTask;
     private readonly DispatcherTimer _timer;
+    private bool _tickInProgress;
 
     public bool Enabled { get; set; } = true;
 
@@ -23,22 +24,40 @@ public sealed class SchedulerService
 
     private async void OnTick(object? sender, EventArgs e)
     {
-        if (!Enabled) return;
+        if (!Enabled || _tickInProgress) return;
+        _tickInProgress = true;
 
-        var now = DateTime.Now;
-        var hhmm = now.ToString("HH:mm");
-
-        foreach (var task in _store.GetAll().Where(t => t.Enabled && t.Time == hhmm))
+        try
         {
-            // Run at most once per minute stamp.
-            if (task.LastRunAt is { } last && last.ToString("yyyy-MM-dd HH:mm") == now.ToString("yyyy-MM-dd HH:mm"))
-                continue;
+            var now = DateTime.Now;
+            var hhmm = now.ToString("HH:mm");
 
-            task.LastRunAt = now;
-            _store.Upsert(task);
+            var dueTasks = _store.GetAll()
+                .Where(t => t.Enabled && t.Time == hhmm)
+                .Where(task => task.LastRunAt is not { } last
+                    || last.ToString("yyyy-MM-dd HH:mm") != now.ToString("yyyy-MM-dd HH:mm"))
+                .ToList();
 
-            try { await _runTask(task).ConfigureAwait(false); }
-            catch { /* best effort scheduler */ }
+            if (dueTasks.Count == 0)
+                return;
+
+            foreach (var task in dueTasks)
+            {
+                task.LastRunAt = now;
+                _store.Upsert(task);
+            }
+
+            var executions = dueTasks.Select(async task =>
+            {
+                try { await _runTask(task).ConfigureAwait(false); }
+                catch { /* best effort scheduler */ }
+            });
+
+            await Task.WhenAll(executions).ConfigureAwait(false);
+        }
+        finally
+        {
+            _tickInProgress = false;
         }
     }
 }

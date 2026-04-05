@@ -366,7 +366,7 @@ public class AppScanner
 
     // ───── Custom / user-remembered apps ─────
 
-    private const string CustomAppsFile = "data/custom-apps.json";
+    private static readonly string CustomAppsFile = AppPaths.CustomAppsFile;
 
     private static void ScanCustomApps(Dictionary<string, JObject> tools)
     {

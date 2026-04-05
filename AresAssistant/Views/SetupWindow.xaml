@@ -284,7 +284,10 @@
                                                 Margin="0,0,5,5" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
-                                                <TextBlock Text="🎩" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Formal" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Profesional y preciso" FontSize="9"
@@ -298,7 +301,10 @@
                                                 Margin="5,0,0,5" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
-                                                <TextBlock Text="😎" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Casual" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Relajado y amigable" FontSize="9"
@@ -312,7 +318,10 @@
                                                 Margin="0,5,5,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
-                                                <TextBlock Text="😏" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Sarcástico" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Ingenioso y mordaz" FontSize="9"
@@ -326,7 +335,10 @@
                                                 Margin="5,5,0,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="Personality_Click">
                                             <StackPanel>
-                                                <TextBlock Text="🔬" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Técnico" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Detallado y analítico" FontSize="9"
@@ -401,7 +413,10 @@
                                                 Margin="0,0,5,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="PerfMode_Click">
                                             <StackPanel>
-                                                <TextBlock Text="⚡" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Ligero" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Rápido, poca RAM" FontSize="9"
@@ -418,7 +433,10 @@
                                                 Margin="5,0,0,0" Padding="14,12" Cursor="Hand"
                                                 MouseLeftButtonDown="PerfMode_Click">
                                             <StackPanel>
-                                                <TextBlock Text="🧠" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                                <Path Data="M 8,0 L 16,11 L 8,22 L 0,11 Z"
+                                                      Width="12" Height="18" Stretch="Fill"
+                                                      HorizontalAlignment="Center" Margin="0,0,0,7"
+                                                      Fill="{DynamicResource AccentBrush}" Opacity="0.9"/>
                                                 <TextBlock Text="Avanzado" FontFamily="Consolas" FontSize="12" FontWeight="Bold"
                                                            Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="Más contexto y detalle" FontSize="9"
@@ -448,13 +466,13 @@
                                                FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"
                                                TextWrapping="Wrap"/>
                                         <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="SetupInstallOllama" Content="⬇  Instalar todo"
+                                        <Button x:Name="SetupInstallOllama" Content="Instalar todo"
                                                 Style="{StaticResource GhostButton}"
                                                 Height="34" Padding="20,0"
                                                 HorizontalAlignment="Left" Cursor="Hand"
                                                 FontFamily="Consolas" FontSize="12"
                                                 Click="SetupInstallOllama_Click"/>
-                                        <Button x:Name="SetupRepairAllAi" Content="🛠  Reparar IA"
+                                        <Button x:Name="SetupRepairAllAi" Content="Reparar IA"
                                             Style="{StaticResource GhostButton}"
                                             Height="34" Padding="20,0"
                                             HorizontalAlignment="Left" Cursor="Hand"
@@ -715,7 +733,7 @@
                                                FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"
                                                TextWrapping="Wrap"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="SetupDownloadPiper" Content="⬇  Descargar voces offline"
+                                        <Button x:Name="SetupDownloadPiper" Content="Descargar voces offline"
                                                 Style="{StaticResource GhostButton}"
                                                 Height="34" Padding="20,0"
                                                 HorizontalAlignment="Left" Cursor="Hand"
@@ -741,7 +759,7 @@
                                     </StackPanel>
                                     <TextBlock Text="Escucha cómo suena tu asistente con la configuración actual"
                                                FontSize="10" Foreground="{DynamicResource SubtextBrush}" FontFamily="Consolas" Margin="0,0,0,12"/>
-                                    <Button x:Name="SetupTestVoice" Content="▶  Probar voz"
+                                        <Button x:Name="SetupTestVoice" Content="Probar voz"
                                             Style="{StaticResource GhostButton}"
                                             Height="34" Padding="20,0"
                                             HorizontalAlignment="Left" Cursor="Hand"

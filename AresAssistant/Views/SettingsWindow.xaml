@@ -63,7 +63,7 @@
                                 <DropShadowEffect Color="{DynamicResource AccentMediaColor}" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
                             </Path.Effect>
                         </Path>
-                        <TextBlock Text="AJUSTES" FontFamily="Consolas" FontSize="14"
+                        <TextBlock Text="Configuración" FontFamily="Consolas" FontSize="14"
                                    FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
@@ -85,7 +85,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="APARIENCIA" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Apariencia" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
@@ -204,135 +204,79 @@
                     <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
                             BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="INTELIGENCIA ARTIFICIAL" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Asistente IA" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,6,10">
-                                    <TextBlock Text="Modelo de Ollama" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
-                                    <ComboBox Text="{Binding OllamaModel}" IsEditable="True"
-                                              ItemsSource="{Binding AvailableModels}"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="6,0,0,10">
-                                    <TextBlock Text="Nombre del asistente" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
-                                    <TextBox Style="{StaticResource AresTextBox}"
-                                             Text="{Binding AssistantName, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,10">
-                                    <TextBlock Text="Personalidad" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
-                                    <ComboBox SelectedValue="{Binding Personality}" SelectedValuePath="Tag">
-                                        <ComboBoxItem Content="Formal" Tag="formal"/>
-                                        <ComboBoxItem Content="Casual" Tag="casual"/>
-                                        <ComboBoxItem Content="Sarcástico" Tag="sarcastico"/>
-                                        <ComboBoxItem Content="Técnico" Tag="tecnico"/>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Grid.Column="1" Margin="6,0,0,10">
-                                    <TextBlock Text="Longitud de respuesta" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
-                                    <ComboBox SelectedValue="{Binding ResponseLength}" SelectedValuePath="Tag">
-                                        <ComboBoxItem Content="Conciso" Tag="conciso"/>
-                                        <ComboBoxItem Content="Normal" Tag="normal"/>
-                                        <ComboBoxItem Content="Detallado" Tag="detallado"/>
-                                    </ComboBox>
-                                </StackPanel>
+                            <TextBlock Text="Elige el modelo y cómo quieres que responda el asistente."
+                                       TextWrapping="Wrap" FontSize="11" FontFamily="Consolas"
+                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,10"/>
 
-                                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,10">
-                                    <TextBlock Text="Perfil de contexto" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
-                                    <ComboBox SelectedValue="{Binding ContextProfile}" SelectedValuePath="Tag">
-                                        <ComboBoxItem Content="Trabajo" Tag="trabajo"/>
-                                        <ComboBoxItem Content="Gaming" Tag="gaming"/>
-                                        <ComboBoxItem Content="Estudio" Tag="estudio"/>
-                                    </ComboBox>
+                            <!-- Essentials -->
+                            <Border Background="#1410161f" BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
+                                    CornerRadius="10" Padding="10" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="Básico" FontSize="10" FontFamily="Consolas" FontWeight="Bold"
+                                               Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,8"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Text="Modelo de Ollama" FontSize="11"
+                                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
+                                            <ComboBox Text="{Binding OllamaModel}" IsEditable="True"
+                                                      ItemsSource="{Binding AvailableModels}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <TextBlock Text="Longitud de respuesta" FontSize="11"
+                                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
+                                            <ComboBox SelectedValue="{Binding ResponseLength}" SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Conciso" Tag="conciso"/>
+                                                <ComboBoxItem Content="Normal" Tag="normal"/>
+                                                <ComboBoxItem Content="Detallado" Tag="detallado"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Text="Personalidad" FontSize="11"
+                                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
+                                            <ComboBox SelectedValue="{Binding Personality}" SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Formal" Tag="formal"/>
+                                                <ComboBoxItem Content="Casual" Tag="casual"/>
+                                                <ComboBoxItem Content="Sarcástico" Tag="sarcastico"/>
+                                                <ComboBoxItem Content="Técnico" Tag="tecnico"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0" VerticalAlignment="Bottom">
+                                            <CheckBox Style="{StaticResource AresCheckBox}"
+                                                      Content="Modo agente autónomo"
+                                                      IsChecked="{Binding AutonomousMode}"/>
+                                            <CheckBox Style="{StaticResource AresCheckBox}" Margin="0,6,0,0"
+                                                      Content="Usar contexto de apps abiertas"
+                                                      IsChecked="{Binding ProcessContextEnabled}"/>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
+                            </Border>
 
-                                <StackPanel Grid.Row="2" Grid.Column="1" Margin="6,0,0,10">
-                                    <CheckBox Style="{StaticResource AresCheckBox}"
-                                              Content="Modo agente autónomo"
-                                              IsChecked="{Binding AutonomousMode}"/>
-                                    <CheckBox Style="{StaticResource AresCheckBox}" Margin="0,6,0,0"
-                                              Content="Usar contexto de apps abiertas"
-                                              IsChecked="{Binding ProcessContextEnabled}"/>
-                                </StackPanel>
-
-                                <Border Grid.Row="3" Grid.ColumnSpan="2"
-                                        Background="{DynamicResource GlassBrush}" CornerRadius="10"
-                                        BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
-                                        Padding="12,10" Margin="0,0,0,8">
-                                    <StackPanel>
-                                        <CheckBox Style="{StaticResource AresCheckBox}"
-                                                  Content="Multimodelo local gratis (Ollama)"
-                                                  IsChecked="{Binding MultiModelEnabled}"/>
-                                        <Grid Margin="0,8,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                                                <TextBlock Text="Modelo coding" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
-                                                <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelCodingModel, UpdateSourceTrigger=PropertyChanged}"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="1" Margin="6,0,6,0">
-                                                <TextBlock Text="Modelo reasoning" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
-                                                <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelReasoningModel, UpdateSourceTrigger=PropertyChanged}"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="2" Margin="6,0,0,0">
-                                                <TextBlock Text="Modelo visión" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
-                                                <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelVisionModel, UpdateSourceTrigger=PropertyChanged}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                        <Grid Margin="0,8,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="280"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                                <TextBlock Text="Modo visión predeterminado" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
-                                                <ComboBox SelectedValue="{Binding VisionDefaultMode}" SelectedValuePath="Tag">
-                                                    <ComboBoxItem Content="Estricto (solo visible)" Tag="estricto"/>
-                                                    <ComboBoxItem Content="Inferencia (marcada como probable)" Tag="inferencia"/>
-                                                </ComboBox>
-                                            </StackPanel>
-                                            <TextBlock Grid.Column="1"
-                                                       Text="Este es el control del modo de visión. Puedes forzar uno distinto al preguntar: 'modo estricto' o 'modo inferencia'."
-                                                       FontSize="10" Foreground="{DynamicResource SubtextBrush}"
-                                                       VerticalAlignment="Center" TextWrapping="Wrap"/>
-                                        </Grid>
-                                        <TextBlock Text="Fallbacks (coma):" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,8,0,4"/>
-                                        <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelFallbacks, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- Ollama status + check button — FIX: proper layout -->
-                                <Border Grid.Row="4" Grid.ColumnSpan="2"
-                                        Background="{DynamicResource GlassBrush}" CornerRadius="10"
-                                        BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
-                                        Padding="12,8" Margin="0,2,0,0">
-                                    <StackPanel>
+                            <!-- Status + actions -->
+                            <Border Background="{DynamicResource GlassBrush}" CornerRadius="10"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
+                                    Padding="12,8" Margin="0,0,0,10">
+                                <StackPanel>
                                     <TextBlock Text="{Binding OllamaStatus}" FontSize="11"
-                                           Foreground="{DynamicResource SubtextBrush}"
-                                           VerticalAlignment="Center" TextWrapping="Wrap"
-                                           FontFamily="Consolas"/>
+                                               Foreground="{DynamicResource SubtextBrush}"
+                                               TextWrapping="Wrap" FontFamily="Consolas"/>
                                     <Border Margin="0,8,0,0" Padding="10,8" CornerRadius="8"
                                             Background="#130f1624" BorderBrush="#2a3553" BorderThickness="1">
                                         <TextBlock x:Name="AiHealthSummaryText"
@@ -341,49 +285,142 @@
                                                    Foreground="{DynamicResource SubtextBrush}"
                                                    TextWrapping="Wrap"/>
                                     </Border>
-                                    <WrapPanel Margin="0,8,0,0">
-                                        <Button Content="Chequear salud IA"
+                                    <TextBlock Text="Acciones recomendadas"
+                                               FontSize="10" FontFamily="Consolas"
+                                               Foreground="{DynamicResource SubtextBrush}"
+                                               Margin="0,8,0,6"/>
+                                    <WrapPanel>
+                                        <Button Content="Comprobar estado IA"
                                             Style="{StaticResource GhostButton}"
                                             Height="30" Padding="14,0"
                                             Margin="0,0,8,8" Click="CheckAiHealth_Click"
                                             ToolTip="Verifica estado de Ollama, API y modelos preferidos"/>
-                                        <Button Content="Auto reparar IA"
+                                        <Button Content="Reparación automática"
                                             Style="{StaticResource AresButton}"
                                             Height="30" Padding="14,0"
                                             Margin="0,0,8,8" Click="AutoRepairAiHealth_Click"
                                             ToolTip="Inicia Ollama e instala faltantes detectados"/>
-                                        <Button Content="Verificar"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="14,0"
-                                            Margin="0,0,8,8" Click="CheckOllama_Click"/>
-                                        <Button Content="Diagnóstico routing"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="14,0"
-                                            Margin="0,0,8,8" ToolTip="Muestra cómo enruta modelos sin ejecutar inferencia"
-                                            Click="TestModelRouting_Click"/>
-                                        <Button Content="Probar visión"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="14,0"
-                                            Margin="0,0,8,8" Click="TestVision_Click"/>
-                                        <Button Content="Probar clima"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="14,0"
-                                            Margin="0,0,8,8" Click="TestWeather_Click"
-                                            ToolTip="Ejecuta get_weather y muestra fuente de ubicación usada"/>
-                                        <Button Content="Reparar todo IA"
+                                        <Button Content="Reparación completa"
                                             Style="{StaticResource AresButton}"
                                             Height="30" Padding="14,0"
                                             Margin="0,0,8,8" Click="QuickRepairAi_Click"
                                             ToolTip="Repara faltantes de routing y modelo de visión en un solo paso"/>
-                                        <Button Content="Automation Studio"
-                                            Style="{StaticResource GhostButton}"
-                                            Height="30" Padding="14,0"
-                                            Margin="0,0,8,8" Click="OpenAutomationStudio_Click"
-                                            ToolTip="Editor visual MVP de automatizaciones"/>
                                     </WrapPanel>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
+                                    <Expander Header="Diagnóstico y pruebas técnicas" Margin="0,2,0,0"
+                                              Foreground="{DynamicResource SubtextBrush}"
+                                              FontFamily="Consolas" FontSize="10">
+                                        <WrapPanel Margin="0,8,0,0">
+                                            <Button Content="Verificar"
+                                                Style="{StaticResource GhostButton}"
+                                                Height="30" Padding="14,0"
+                                                Margin="0,0,8,8" Click="CheckOllama_Click"/>
+                                            <Button Style="{StaticResource GhostButton}"
+                                                Height="30" Padding="14,0"
+                                                Margin="0,0,8,8" ToolTip="Muestra cómo enruta modelos sin ejecutar inferencia"
+                                                Click="TestModelRouting_Click">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path Data="M 6,0 L 12,9 L 6,18 L 0,9 Z"
+                                                          Width="8" Height="12" Stretch="Fill"
+                                                          Fill="{DynamicResource AccentBrush}" Margin="0,0,6,0"
+                                                          VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Diagnóstico de modelos" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Content="Probar visión"
+                                                Style="{StaticResource GhostButton}"
+                                                Height="30" Padding="14,0"
+                                                Margin="0,0,8,8" Click="TestVision_Click"/>
+                                            <Button Content="Probar clima"
+                                                Style="{StaticResource GhostButton}"
+                                                Height="30" Padding="14,0"
+                                                Margin="0,0,8,8" Click="TestWeather_Click"
+                                                ToolTip="Ejecuta get_weather y muestra fuente de ubicación usada"/>
+                                            <Button Content="Automatizaciones"
+                                                Style="{StaticResource GhostButton}"
+                                                Height="30" Padding="14,0"
+                                                Margin="0,0,8,8" Click="OpenAutomationStudio_Click"
+                                                ToolTip="Editor visual MVP de automatizaciones"/>
+                                        </WrapPanel>
+                                    </Expander>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Advanced: name, context profile, multimodel -->
+                            <Expander Header="Opciones avanzadas" Margin="0,0,0,0"
+                                      Foreground="{DynamicResource SubtextBrush}"
+                                      FontFamily="Consolas" FontSize="10">
+                                <StackPanel Margin="0,8,0,0">
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Text="Nombre del asistente" FontSize="11"
+                                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
+                                            <TextBox Style="{StaticResource AresTextBox}"
+                                                     Text="{Binding AssistantName}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <TextBlock Text="Perfil de contexto" FontSize="11"
+                                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
+                                            <ComboBox SelectedValue="{Binding ContextProfile}" SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Trabajo" Tag="trabajo"/>
+                                                <ComboBoxItem Content="Gaming" Tag="gaming"/>
+                                                <ComboBoxItem Content="Estudio" Tag="estudio"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Background="{DynamicResource GlassBrush}" CornerRadius="10"
+                                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
+                                            Padding="12,10" Margin="0,0,0,0">
+                                        <StackPanel>
+                                            <CheckBox Style="{StaticResource AresCheckBox}"
+                                                      Content="Multimodelo local gratis (Ollama)"
+                                                      IsChecked="{Binding MultiModelEnabled}"/>
+                                            <Grid Margin="0,8,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                    <TextBlock Text="Modelo coding" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
+                                                    <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelCodingModel}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Margin="6,0,6,0">
+                                                    <TextBlock Text="Modelo reasoning" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
+                                                    <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelReasoningModel}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Margin="6,0,0,0">
+                                                    <TextBlock Text="Modelo visión" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
+                                                    <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelVisionModel}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Grid Margin="0,8,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="280"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                                    <TextBlock Text="Modo visión predeterminado" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,4"/>
+                                                    <ComboBox SelectedValue="{Binding VisionDefaultMode}" SelectedValuePath="Tag">
+                                                        <ComboBoxItem Content="Estricto (solo visible)" Tag="estricto"/>
+                                                        <ComboBoxItem Content="Inferencia (marcada como probable)" Tag="inferencia"/>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="Puedes forzar un modo distinto al preguntar: 'modo estricto' o 'modo inferencia'."
+                                                           FontSize="10" Foreground="{DynamicResource SubtextBrush}"
+                                                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                            </Grid>
+                                            <TextBlock Text="Fallbacks (coma):" FontSize="10" Foreground="{DynamicResource SubtextBrush}" Margin="0,8,0,4"/>
+                                            <TextBox Style="{StaticResource AresTextBox}" Text="{Binding MultiModelFallbacks}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Expander>
                         </StackPanel>
                     </Border>
 
@@ -394,7 +431,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="RENDIMIENTO" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Rendimiento" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
@@ -419,13 +456,17 @@
                             <ComboBox SelectedValue="{Binding PerformanceMode}" SelectedValuePath="Tag">
                                 <ComboBoxItem Tag="ligero">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="⚡" Margin="0,0,6,0"/>
+                                        <Path Data="M 6,0 L 12,9 L 6,18 L 0,9 Z"
+                                              Width="8" Height="12" Stretch="Fill"
+                                              Fill="{DynamicResource AccentBrush}" Margin="0,0,6,0"/>
                                         <TextBlock Text="Ligero — rápido, poca RAM (2K ctx)"/>
                                     </StackPanel>
                                 </ComboBoxItem>
                                 <ComboBoxItem Tag="avanzado">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="🧠" Margin="0,0,6,0"/>
+                                        <Path Data="M 6,0 L 12,9 L 6,18 L 0,9 Z"
+                                              Width="8" Height="12" Stretch="Fill"
+                                              Fill="{DynamicResource AccentBrush}" Margin="0,0,6,0"/>
                                         <TextBlock Text="Avanzado — más contexto (8K ctx)"/>
                                     </StackPanel>
                                 </ComboBoxItem>
@@ -433,14 +474,14 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ═══════════════════ TECLAS RÁPIDAS ═══════════════════ -->
+                    <!-- ═══════════════════ ATAJOS DE TECLADO ═══════════════════ -->
                     <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
                             BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="TECLAS RÁPIDAS" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Atajos de teclado" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
@@ -453,13 +494,13 @@
                                     <TextBlock Text="Mostrar / ocultar" FontSize="11"
                                                Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
                                     <TextBox Style="{StaticResource AresTextBox}"
-                                             Text="{Binding ShowHideHotkey, UpdateSourceTrigger=PropertyChanged}"/>
+                                             Text="{Binding ShowHideHotkey}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="6,0,0,0">
                                     <TextBlock Text="Cambiar modo" FontSize="11"
                                                Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,5"/>
                                     <TextBox Style="{StaticResource AresTextBox}"
-                                             Text="{Binding ToggleModeHotkey, UpdateSourceTrigger=PropertyChanged}"/>
+                                             Text="{Binding ToggleModeHotkey}"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
@@ -472,148 +513,168 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="SISTEMA" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Sistema" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Iniciar con Windows"
-                                      IsChecked="{Binding LaunchWithWindows}"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Guardar historial del chat"
-                                      IsChecked="{Binding SaveChatHistory}" Margin="0,6,0,0"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Minimizar a la bandeja al cerrar"
-                                      IsChecked="{Binding CloseToTray}" Margin="0,6,0,0"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Pedir confirmación en acciones peligrosas"
-                                      IsChecked="{Binding ConfirmationAlertsEnabled}" Margin="0,6,0,0"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Automatizaciones programadas (diarias)"
-                                      IsChecked="{Binding ScheduledAutomationsEnabled}" Margin="0,6,0,0"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Portapapeles inteligente (sugerencias)"
-                                      IsChecked="{Binding ClipboardSmartEnabled}" Margin="0,6,0,0"/>
-                            <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Voz del asistente (leer respuestas en voz alta)"
-                                      IsChecked="{Binding VoiceEnabled}" Margin="0,6,0,0"/>
-                                <TextBlock Text="Widgets del dashboard HUD" FontSize="11"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource AccentBrush}" Margin="0,10,0,4"/>
-                                <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Widget clima"
-                                      IsChecked="{Binding WidgetWeatherEnabled}"/>
-                                <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Widget hora mundial"
-                                      IsChecked="{Binding WidgetWorldClockEnabled}" Margin="0,6,0,0"/>
-                                <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Widget CPU/RAM en vivo"
-                                      IsChecked="{Binding WidgetSystemLiveEnabled}" Margin="0,6,0,0"/>
-                                <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Widget próximas tareas"
-                                      IsChecked="{Binding WidgetTasksEnabled}" Margin="0,6,0,0"/>
-                                <CheckBox Style="{StaticResource AresCheckBox}"
-                                      Content="Widget productividad + resumen IA"
-                                      IsChecked="{Binding WidgetProductivityEnabled}" Margin="0,6,0,0"/>
+                            <TextBlock Text="Configura aquí el comportamiento general. Las opciones menos usadas están en 'Opciones avanzadas'."
+                                       TextWrapping="Wrap" FontSize="11" FontFamily="Consolas"
+                                       Foreground="{DynamicResource SubtextBrush}" Margin="0,0,0,10"/>
 
-                            <!-- TTS engine status + volume -->
-                            <Border Margin="0,8,0,0" Background="{DynamicResource GlassBrush}" CornerRadius="10"
-                                    BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="12,10">
+                            <Border Background="#1410161f" BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1"
+                                    CornerRadius="10" Padding="10" Margin="0,0,0,10">
                                 <StackPanel>
-                                    <!-- Voice gender -->
-                                    <Grid Margin="0,0,0,8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="Género de voz" FontSize="11"
-                                                   Foreground="{DynamicResource SubtextBrush}"
-                                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                        <ComboBox Grid.Column="1"
-                                                  SelectedValue="{Binding TtsVoiceGender}" SelectedValuePath="Tag">
-                                            <ComboBoxItem Content="Masculino — Alvaro / Piper" Tag="masculino"/>
-                                            <ComboBoxItem Content="Femenino — Dalia / Piper" Tag="femenino"/>
-                                        </ComboBox>
-                                    </Grid>
-                                    <!-- Volume row -->
-                                    <Grid Margin="0,0,0,8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="Volumen" FontSize="11"
-                                                   Foreground="{DynamicResource SubtextBrush}"
-                                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                        <Slider Grid.Column="1"
-                                                Minimum="0" Maximum="1" SmallChange="0.05"
-                                                Value="{Binding TtsVolume, UpdateSourceTrigger=PropertyChanged}"
-                                                VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{Binding TtsVolume, StringFormat='{}{0:P0}'}"
-                                                   FontSize="11" FontFamily="Consolas"
-                                                   Foreground="{DynamicResource AccentBrush}"
-                                                   VerticalAlignment="Center" Margin="8,0,0,0" Width="36"
-                                                   TextAlignment="Right"/>
-                                    </Grid>
-                                    <!-- Engine status + buttons row -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding TtsEngineStatus}" FontSize="10"
-                                                   Foreground="{DynamicResource SubtextBrush}"
-                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
-                                        <Button Grid.Column="1" Content="⬇ Piper offline"
-                                                Style="{StaticResource GhostButton}"
-                                                Visibility="{Binding PiperButtonVisible}"
-                                                IsEnabled="{Binding CanDownloadPiper}"
-                                                Height="26" Padding="10,0" Margin="8,0,0,0"
-                                                Click="DownloadPiper_Click"/>
-                                        <Button Grid.Column="2" Content="▶ Probar"
-                                                Style="{StaticResource GhostButton}"
-                                                Height="26" Padding="10,0" Margin="6,0,0,0"
-                                                Click="TestVoice_Click"/>
-                                    </Grid>
+                                    <TextBlock Text="Básico" FontSize="10" FontFamily="Consolas" FontWeight="Bold"
+                                               Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,6"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Iniciar con Windows"
+                                              IsChecked="{Binding LaunchWithWindows}"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Minimizar a la bandeja al cerrar"
+                                              IsChecked="{Binding CloseToTray}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Guardar historial del chat"
+                                              IsChecked="{Binding SaveChatHistory}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Voz del asistente"
+                                              IsChecked="{Binding VoiceEnabled}" Margin="0,6,0,0"/>
                                 </StackPanel>
                             </Border>
 
-                            <Grid Margin="0,12,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="Descargar modelo tras" FontSize="11"
-                                               Foreground="{DynamicResource SubtextBrush}"
-                                               VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <ComboBox SelectedValue="{Binding ModelKeepAliveMinutes}"
-                                              SelectedValuePath="Tag" Width="110">
-                                        <ComboBoxItem Content="Nunca" Tag="0"/>
-                                        <ComboBoxItem Content="1 min" Tag="1"/>
-                                        <ComboBoxItem Content="5 min" Tag="5"/>
-                                        <ComboBoxItem Content="10 min" Tag="10"/>
-                                        <ComboBoxItem Content="30 min" Tag="30"/>
-                                    </ComboBox>
+                            <Expander Header="Opciones avanzadas" Margin="0,0,0,0"
+                                      Foreground="{DynamicResource SubtextBrush}"
+                                      FontFamily="Consolas" FontSize="10">
+                                <StackPanel Margin="0,8,0,0">
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Pedir confirmación en acciones peligrosas"
+                                              IsChecked="{Binding ConfirmationAlertsEnabled}"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Automatizaciones programadas (diarias)"
+                                              IsChecked="{Binding ScheduledAutomationsEnabled}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Portapapeles inteligente (sugerencias)"
+                                              IsChecked="{Binding ClipboardSmartEnabled}" Margin="0,6,0,0"/>
+
+                                    <TextBlock Text="Widgets del dashboard HUD" FontSize="10"
+                                               FontWeight="Bold" FontFamily="Consolas"
+                                               Foreground="{DynamicResource AccentBrush}" Margin="0,12,0,6"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Widget clima"
+                                              IsChecked="{Binding WidgetWeatherEnabled}"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Widget hora mundial"
+                                              IsChecked="{Binding WidgetWorldClockEnabled}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Widget CPU/RAM en vivo"
+                                              IsChecked="{Binding WidgetSystemLiveEnabled}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Widget próximas tareas"
+                                              IsChecked="{Binding WidgetTasksEnabled}" Margin="0,6,0,0"/>
+                                    <CheckBox Style="{StaticResource AresCheckBox}"
+                                              Content="Widget productividad + resumen IA"
+                                              IsChecked="{Binding WidgetProductivityEnabled}" Margin="0,6,0,0"/>
+
+                                    <Border Margin="0,10,0,0" Background="{DynamicResource GlassBrush}" CornerRadius="10"
+                                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="12,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Voz" FontSize="10" FontFamily="Consolas" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,8"/>
+                                            <Grid Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Género" FontSize="11"
+                                                           Foreground="{DynamicResource SubtextBrush}"
+                                                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <ComboBox Grid.Column="1"
+                                                          SelectedValue="{Binding TtsVoiceGender}" SelectedValuePath="Tag">
+                                                    <ComboBoxItem Content="Masculino — Alvaro / Piper" Tag="masculino"/>
+                                                    <ComboBoxItem Content="Femenino — Dalia / Piper" Tag="femenino"/>
+                                                </ComboBox>
+                                            </Grid>
+                                            <Grid Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Volumen" FontSize="11"
+                                                           Foreground="{DynamicResource SubtextBrush}"
+                                                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <Slider Grid.Column="1"
+                                                        Minimum="0" Maximum="1" SmallChange="0.05"
+                                                        Value="{Binding TtsVolume, UpdateSourceTrigger=PropertyChanged}"
+                                                        VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding TtsVolume, StringFormat='{}{0:P0}'}"
+                                                           FontSize="11" FontFamily="Consolas"
+                                                           Foreground="{DynamicResource AccentBrush}"
+                                                           VerticalAlignment="Center" Margin="8,0,0,0" Width="36"
+                                                           TextAlignment="Right"/>
+                                            </Grid>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding TtsEngineStatus}" FontSize="10"
+                                                           Foreground="{DynamicResource SubtextBrush}"
+                                                           VerticalAlignment="Center" FontFamily="Consolas"/>
+                                                <Button Grid.Column="1" Content="Piper offline"
+                                                        Style="{StaticResource GhostButton}"
+                                                        Visibility="{Binding PiperButtonVisible}"
+                                                        IsEnabled="{Binding CanDownloadPiper}"
+                                                        Height="26" Padding="10,0" Margin="8,0,0,0"
+                                                        Click="DownloadPiper_Click"/>
+                                                <Button Grid.Column="2" Content="Probar"
+                                                        Style="{StaticResource GhostButton}"
+                                                        Height="26" Padding="10,0" Margin="6,0,0,0"
+                                                        Click="TestVoice_Click"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Margin="0,10,0,0" Background="{DynamicResource GlassBrush}" CornerRadius="10"
+                                            BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="12,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="Descargar modelo tras" FontSize="11"
+                                                           Foreground="{DynamicResource SubtextBrush}"
+                                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                <ComboBox SelectedValue="{Binding ModelKeepAliveMinutes}"
+                                                          SelectedValuePath="Tag" Width="110">
+                                                    <ComboBoxItem Content="Nunca" Tag="0"/>
+                                                    <ComboBoxItem Content="1 min" Tag="1"/>
+                                                    <ComboBoxItem Content="5 min" Tag="5"/>
+                                                    <ComboBoxItem Content="10 min" Tag="10"/>
+                                                    <ComboBoxItem Content="30 min" Tag="30"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="Reescanear"
+                                                    Style="{StaticResource GhostButton}"
+                                                    Height="30" Padding="14,0"
+                                                    Click="Rescan_Click"/>
+                                        </Grid>
+                                    </Border>
                                 </StackPanel>
-                                <Button Grid.Column="1" Content="Reescanear"
-                                        Style="{StaticResource GhostButton}"
-                                        Height="30" Padding="14,0"
-                                        Click="Rescan_Click"/>
-                            </Grid>
+                            </Expander>
                         </StackPanel>
                     </Border>
 
-                    <!-- ═══════════════════ AYUDA Y ONBOARDING ═══════════════════ -->
+                    <!-- ═══════════════════ AYUDA ═══════════════════ -->
                     <Border Background="{DynamicResource GlassBrush}" CornerRadius="16"
                             BorderBrush="{DynamicResource GlassBorderBrush}" BorderThickness="1" Padding="18,14" Margin="0,0,0,12">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Text="AYUDA Y ONBOARDING" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Ayuda" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
@@ -626,7 +687,7 @@
                             </Border>
 
                             <WrapPanel>
-                                <Button Content="⟲ Repetir tutorial"
+                                <Button Content="Repetir tutorial"
                                         Style="{StaticResource GhostButton}"
                                         Height="32" Padding="14,0" Margin="0,0,8,0"
                                         ToolTip="Abre el onboarding visual paso a paso"
@@ -640,21 +701,21 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ═══════════════════ ZONA DE PELIGRO ═══════════════════ -->
+                    <!-- ═══════════════════ RESTABLECIMIENTO ═══════════════════ -->
                     <Border Background="#1a100808" CornerRadius="16"
                             BorderBrush="#3a1515" BorderThickness="1" Padding="18,14" Margin="0,0,0,4">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Rectangle Width="2.5" Height="13" RadiusX="1" RadiusY="1"
                                            Fill="#cc3333" VerticalAlignment="Center"/>
-                                <TextBlock Text="ZONA DE PELIGRO" FontFamily="Consolas" FontSize="10"
+                                <TextBlock Text="Restablecimiento" FontFamily="Consolas" FontSize="10"
                                            FontWeight="Bold" Foreground="#cc3333"
                                            VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
                             <TextBlock Text="Elimina permanentemente todos los datos almacenados: historial de chat, configuración personalizada, herramientas escaneadas y registros."
                                        FontSize="11" Foreground="#aa8888" TextWrapping="Wrap"
                                        Margin="0,0,0,12" FontFamily="Consolas"/>
-                            <Button Content="⚠  Borrar todos los datos"
+                                <Button Content="Borrar todos los datos"
                                     Style="{StaticResource GhostButton}"
                                     Foreground="#cc3333"
                                     Height="34" Padding="16,0"

@@ -21,7 +21,7 @@ public class ActionHistoryTool : ITool
     {
         var maxLines = args.TryGetValue("max_lines", out var m) ? Math.Clamp(m.Value<int>(), 1, 200) : 20;
 
-        var logsDir = Path.GetFullPath("data/logs");
+        var logsDir = AppPaths.LogsDirectory;
         if (!Directory.Exists(logsDir))
             return Task.FromResult(new ToolResult(true, "No hay historial de acciones todavía."));
 

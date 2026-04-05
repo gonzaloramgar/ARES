@@ -111,7 +111,7 @@ public partial class OllamaInstallWindow : Window
 
             if (!ready)
             {
-                TxtStep.Text = "⚠ Ollama no responde";
+                TxtStep.Text = "Ollama no responde";
                 TxtStatus.Text = "Intenta ejecutar 'ollama serve' manualmente.";
                 TxtPercentage.Text = "Error";
                 BtnCancel.Content = "Cerrar";
@@ -121,7 +121,7 @@ public partial class OllamaInstallWindow : Window
             // ── Success ──
             SetProgress(1.0);
             TxtPercentage.Text = "100 %";
-            TxtStep.Text = "✓ Ollama instalado correctamente";
+            TxtStep.Text = "Ollama instalado correctamente";
             TxtStatus.Text = "Servicio activo y listo.";
             DialogResult = true;
         }

@@ -9,7 +9,7 @@ public class OllamaClient
 {
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromMinutes(2) };
     private const string BaseUrl = "http://localhost:11434";
-    private static readonly string DebugLogPath = Path.Combine("data", "logs", "ollama_debug.log");
+    private static readonly string DebugLogPath = AppPaths.OllamaDebugLogFile;
 
     /// <summary>
     /// Standard request (no streaming). Used for tool-call iterations
@@ -157,7 +157,7 @@ public class OllamaClient
     {
         try
         {
-            Directory.CreateDirectory(Path.Combine("data", "logs"));
+            AppPaths.EnsureDataDirectories();
             var line = $"[{DateTime.Now:HH:mm:ss}] [{tag}] {content}{Environment.NewLine}";
             File.AppendAllText(DebugLogPath, line);
         }

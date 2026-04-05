@@ -296,9 +296,12 @@ public class SettingsViewModel : ViewModelBase
         if (OllamaAvailable)
         {
             var models = await _ollamaClient.GetInstalledModelsAsync();
-            AvailableModels.Clear();
-            foreach (var m in models)
-                AvailableModels.Add(m);
+            if (!AvailableModels.SequenceEqual(models))
+            {
+                AvailableModels.Clear();
+                foreach (var m in models)
+                    AvailableModels.Add(m);
+            }
         }
     }
 

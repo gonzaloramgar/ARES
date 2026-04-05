@@ -93,7 +93,7 @@ public class ChatViewModel : ViewModelBase
     private readonly OllamaClient? _ollamaClient;
     private readonly DispatcherTimer _dashboardTimer;
     private readonly HttpClient _dashboardHttp = new() { Timeout = TimeSpan.FromSeconds(10) };
-    private readonly WeatherCacheStore _weatherCache = new("data/weather-cache.json");
+    private readonly WeatherCacheStore _weatherCache = new(AppPaths.WeatherCacheFile);
     private readonly PerformanceCounter? _cpuCounter;
 
     private string _inputText = "";
@@ -225,7 +225,7 @@ public class ChatViewModel : ViewModelBase
         }
 
         _dashboardTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
-        _dashboardTimer.Tick += async (_, _) => await UpdateDashboardAsync();
+        _dashboardTimer.Tick += DashboardTimer_Tick;
 
         _agentLoop.ResponseReceived += OnResponseReceived;
         _agentLoop.StatusChanged += OnStatusChanged;
@@ -271,7 +271,7 @@ public class ChatViewModel : ViewModelBase
 
         try
         {
-            await Task.Run(() => _agentLoop.RunAsync(text));
+            await _agentLoop.RunAsync(text);
         }
         catch (Exception ex)
         {
@@ -283,9 +283,21 @@ public class ChatViewModel : ViewModelBase
         finally
         {
             if (_config.SaveChatHistory)
-                _history.SaveToJson("data/chat-history.json");
+                _history.SaveToJson(AppPaths.ChatHistoryFile);
 
             IsBusy = false;
+        }
+    }
+
+    private async void DashboardTimer_Tick(object? sender, EventArgs e)
+    {
+        try
+        {
+            await UpdateDashboardAsync();
+        }
+        catch (Exception ex)
+        {
+            App.WriteCrash("ChatViewModel.UpdateDashboard", ex);
         }
     }
 
@@ -594,6 +606,8 @@ public class ChatViewModel : ViewModelBase
     {
         if (_scheduledTaskStore == null) return;
 
+        UpcomingTasks.Clear();
+
         var now = TimeOnly.FromDateTime(DateTime.Now);
         var upcoming = _scheduledTaskStore
             .GetAll()
@@ -657,9 +671,10 @@ public class ChatViewModel : ViewModelBase
     private async Task RefreshWeatherAsync()
     {
         _weatherRefreshInFlight = true;
+        LocationSnapshot? location = null;
         try
         {
-            var location = await LocationResolver.ResolveByIpAsync();
+            location = await LocationResolver.ResolveByIpAsync();
             if (location == null)
             {
                 WeatherText = "Clima no disponible";
@@ -702,7 +717,7 @@ public class ChatViewModel : ViewModelBase
         }
         catch
         {
-            var location = await LocationResolver.ResolveByIpAsync();
+            location ??= await LocationResolver.ResolveByIpAsync();
             if (location != null)
             {
                 var cached = _weatherCache.TryGet(BuildWeatherCacheKey(location.Latitude, location.Longitude), TimeSpan.FromHours(6));

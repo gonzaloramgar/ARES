@@ -9,10 +9,6 @@ namespace AresAssistant;
 public partial class App : Application
 {
     public const string CurrentOnboardingVersion = "2.0";
-    private static readonly string DataDirectory = Path.Combine(AppContext.BaseDirectory, "data");
-    private static readonly string LogsDirectory = Path.Combine(DataDirectory, "logs");
-    private static readonly string ConfigPath = Path.Combine(DataDirectory, "config.json");
-    private static readonly string ToolsPath = Path.Combine(DataDirectory, "tools.json");
 
     /// <summary>App version displayed in splash and setup screens.</summary>
     public static string AppVersion =>
@@ -24,7 +20,7 @@ public partial class App : Application
     private System.Windows.Forms.NotifyIcon? _trayIcon;
 
     private static readonly string CrashLogPath =
-        Path.Combine(DataDirectory, $"crash_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
+        Path.Combine(AppPaths.DataDirectory, $"crash_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -38,10 +34,9 @@ public partial class App : Application
         try
         {
             // Ensure data directories exist
-            Directory.CreateDirectory(DataDirectory);
-            Directory.CreateDirectory(LogsDirectory);
+            AppPaths.EnsureDataDirectories();
 
-            ConfigManager = new ConfigManager(ConfigPath);
+            ConfigManager = new ConfigManager(AppPaths.ConfigFile);
             ThemeEngine.Apply(ConfigManager.Config);
 
             if (ConfigManager.Config.CloseToTray)
@@ -60,7 +55,7 @@ public partial class App : Application
                     ConfigManager.Update(c => c with { OnboardingVersionSeen = CurrentOnboardingVersion });
                 }
 
-                bool isFirstLaunch = !File.Exists(ToolsPath);
+                bool isFirstLaunch = !File.Exists(AppPaths.ToolsFile);
                 var splash = new SplashWindow(isFirstLaunch);
                 splash.Show();
             }
@@ -71,7 +66,7 @@ public partial class App : Application
         catch (Exception ex)
         {
             WriteCrash("OnStartup", ex);
-            AresMessageBox.Show($"Error al iniciar ARES:\n\n{ex.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
+            AresMessageBox.Show($"Error al iniciar ARES:\n\n{ex.Message}\n\nRevisa los archivos crash_*.log en:\n{AppPaths.DataDirectory}",
                 "ARES — Error");
             Shutdown(1);
         }
@@ -187,7 +182,7 @@ public partial class App : Application
     private void OnDispatcherException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         WriteCrash("UI Thread", e.Exception);
-        AresMessageBox.Show($"Error inesperado:\n\n{e.Exception.Message}\n\nRevisa los archivos crash_*.log en la carpeta data/",
+        AresMessageBox.Show($"Error inesperado:\n\n{e.Exception.Message}\n\nRevisa los archivos crash_*.log en:\n{AppPaths.DataDirectory}",
             "ARES — Error");
         e.Handled = true;
     }
@@ -207,7 +202,7 @@ public partial class App : Application
     {
         try
         {
-            Directory.CreateDirectory(DataDirectory);
+            AppPaths.EnsureDataDirectories();
             var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{context}]\n" +
                       $"{ex?.GetType().Name}: {ex?.Message}\n" +
                       $"{ex?.StackTrace}\n" +

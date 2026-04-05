@@ -128,7 +128,7 @@ public partial class UpdateWindow : Window
 
             SetProgress(1.0);
             TxtPercentage.Text = "100 %";
-            TxtStep.Text = "✓ Listo — reiniciando...";
+            TxtStep.Text = "Listo. Reiniciando...";
 
             // Lanzar el bat y cerrar la app
             Process.Start(new ProcessStartInfo

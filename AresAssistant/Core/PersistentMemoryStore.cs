@@ -167,8 +167,7 @@ public sealed class PersistentMemoryStore
     {
         try
         {
-            var cwd = Directory.GetCurrentDirectory();
-            var name = new DirectoryInfo(cwd).Name;
+            var name = AppPaths.ProjectScopeName;
             return string.IsNullOrWhiteSpace(name) ? "general" : name;
         }
         catch

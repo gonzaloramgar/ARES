@@ -20,14 +20,17 @@ public partial class MainWindow : Window
     private readonly List<int> _hotkeyIds = new();
 
     // Inactivity timer — unloads the model from Ollama RAM after idle period
-    private DispatcherTimer? _idleTimer;
-    private DispatcherTimer? _clipboardHintTimer;
+    private readonly DispatcherTimer _idleTimer;
+    private readonly DispatcherTimer _clipboardHintTimer;
     private OllamaClient? _ollamaClient;
     private SchedulerService? _scheduler;
     private ClipboardMonitor? _clipboardMonitor;
+    private Action<string, string>? _clipboardHintHandler;
     private ProductivityTracker? _productivityTracker;
     private LocalApiServer? _localApiServer;
     private bool _servicesInitialized;
+    private bool _deferredServicesStarted;
+    private bool _isClosed;
 
     public static ChatViewModel ChatViewModel { get; private set; } = null!;
     public static AgentLoop AgentLoop { get; private set; } = null!;
@@ -47,6 +50,12 @@ public partial class MainWindow : Window
         DataContext = _vm;
         _vm.IsInitializingModules = true;
         _vm.InitializationStatus = "Cargando módulos...";
+
+        _idleTimer = new DispatcherTimer();
+        _idleTimer.Tick += IdleTimer_Tick;
+        _clipboardHintTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
+        _clipboardHintTimer.Tick += ClipboardHintTimer_Tick;
+
         PositionWindow();
 
         Loaded += OnLoaded;
@@ -55,6 +64,7 @@ public partial class MainWindow : Window
     private void BuildServices()
     {
         var config = App.ConfigManager.Config;
+        AppPaths.EnsureDataDirectories();
 
         var ollamaClient = new OllamaClient();
         _ollamaClient = ollamaClient;
@@ -64,17 +74,17 @@ public partial class MainWindow : Window
 
         var history = new ConversationHistory();
         var registry = new ToolRegistry();
-        var securityPolicyStore = new SecurityPolicyStore("data/security-policy.json");
+        var securityPolicyStore = new SecurityPolicyStore(AppPaths.SecurityPolicyFile);
         var permManager = new PermissionManager(config.SecurityPolicyEnabled ? securityPolicyStore : null)
         {
             AutoApproveConfirmations = config.AutonomousMode
         };
-        var memoryStore = new PersistentMemoryStore("data/memory.json");
+        var memoryStore = new PersistentMemoryStore(AppPaths.MemoryFile);
         var processContextProvider = new ProcessContextProvider();
-        var scheduledStore = new ScheduledTaskStore("data/scheduled-tasks.json");
-        var productivityTracker = new ProductivityTracker("data/productivity.json");
-        var telemetryStore = new ReliabilityTelemetryStore("data/reliability-telemetry.json", config.ReliabilityTelemetryEnabled);
-        var logger = new ActionLogger("data/logs");
+        var scheduledStore = new ScheduledTaskStore(AppPaths.ScheduledTasksFile);
+        var productivityTracker = new ProductivityTracker(AppPaths.ProductivityFile);
+        var telemetryStore = new ReliabilityTelemetryStore(AppPaths.ReliabilityTelemetryFile, config.ReliabilityTelemetryEnabled);
+        var logger = new ActionLogger(AppPaths.LogsDirectory);
         var dispatcher = new ToolDispatcher(registry, permManager, logger, telemetryStore);
 
         // Register built-in tools
@@ -112,20 +122,20 @@ public partial class MainWindow : Window
         if (config.PluginToolsEnabled)
         {
             var pluginLoader = new PluginToolLoader();
-            pluginLoader.LoadIntoRegistry("data/plugins", registry);
+            pluginLoader.LoadIntoRegistry(AppPaths.PluginsDirectory, registry);
         }
 
         // Load auto-generated tools from scan (also loads data/custom-apps.json)
-        registry.LoadFromJson("data/tools.json");
+        registry.LoadFromJson(AppPaths.ToolsFile);
 
         // Hook confirmation dialog
         dispatcher.ConfirmationRequested += ShowConfirmationDialogAsync;
 
         // Load history if persistence enabled, then strip stale tool-failure messages
         // so old "app not found" results don't prevent the model from retrying.
-        if (config.SaveChatHistory && System.IO.File.Exists("data/chat-history.json"))
+        if (config.SaveChatHistory && System.IO.File.Exists(AppPaths.ChatHistoryFile))
         {
-            history.LoadFromJson("data/chat-history.json");
+            history.LoadFromJson(AppPaths.ChatHistoryFile);
             history.PurgeToolFailures();
         }
 
@@ -150,7 +160,7 @@ public partial class MainWindow : Window
         FullHudControl.DataContext = ChatViewModel;
 
         // Reset inactivity timer every time the agent produces a response
-        AgentLoop.ResponseReceived += _ => ResetIdleTimer();
+        AgentLoop.ResponseReceived += OnAgentResponseReceived;
         ResetIdleTimer();
 
         _scheduler = new SchedulerService(scheduledStore, async task =>
@@ -169,33 +179,46 @@ public partial class MainWindow : Window
         {
             Enabled = config.ClipboardSmartEnabled
         };
-        _clipboardMonitor.ClipboardSmartHint += (_, hint) =>
+        _clipboardHintHandler = (_, hint) =>
         {
             Dispatcher.Invoke(() =>
             {
                 if (ChatViewModel.IsBusy) return;
                 ChatViewModel.StatusText = hint;
 
-                _clipboardHintTimer?.Stop();
-                _clipboardHintTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
-                _clipboardHintTimer.Tick += (_, _) =>
-                {
-                    _clipboardHintTimer?.Stop();
-                    if (!ChatViewModel.IsBusy)
-                        ChatViewModel.StatusText = "";
-                };
+                _clipboardHintTimer.Stop();
                 _clipboardHintTimer.Start();
             });
         };
-        _clipboardMonitor.Start();
+        _clipboardMonitor.ClipboardSmartHint += _clipboardHintHandler;
 
         _productivityTracker = productivityTracker;
-        _productivityTracker.Start();
 
-        if (config.LocalApiEnabled)
+        // Non-critical services are started after first frame so the main UI appears sooner.
+        Dispatcher.BeginInvoke(new Action(StartDeferredServices), DispatcherPriority.ContextIdle);
+    }
+
+    private void StartDeferredServices()
+    {
+        if (_deferredServicesStarted || _isClosed)
+            return;
+
+        _deferredServicesStarted = true;
+        try
         {
-            _localApiServer = new LocalApiServer(config.LocalApiPort, App.ConfigManager, registry);
-            _localApiServer.Start();
+            _clipboardMonitor?.Start();
+            _productivityTracker?.Start();
+
+            var cfg = App.ConfigManager.Config;
+            if (cfg.LocalApiEnabled)
+            {
+                _localApiServer = new LocalApiServer(cfg.LocalApiPort, App.ConfigManager, ToolRegistry);
+                _localApiServer.Start();
+            }
+        }
+        catch (Exception ex)
+        {
+            App.WriteCrash("MainWindow.StartDeferredServices", ex);
         }
     }
 
@@ -359,12 +382,18 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        _idleTimer?.Stop();
+        _isClosed = true;
+        AgentLoop.ResponseReceived -= OnAgentResponseReceived;
+        _idleTimer.Stop();
+        _idleTimer.Tick -= IdleTimer_Tick;
         _scheduler?.Stop();
+        if (_clipboardMonitor != null && _clipboardHintHandler != null)
+            _clipboardMonitor.ClipboardSmartHint -= _clipboardHintHandler;
         _clipboardMonitor?.Stop();
         _productivityTracker?.Stop();
         _localApiServer?.Stop();
-        _clipboardHintTimer?.Stop();
+        _clipboardHintTimer.Stop();
+        _clipboardHintTimer.Tick -= ClipboardHintTimer_Tick;
         // Unload the model so Ollama releases RAM when ARES exits
         _ = _ollamaClient?.UnloadModelAsync(App.ConfigManager.Config.OllamaModel);
         _hotkeyManager.Dispose();
@@ -424,16 +453,38 @@ public partial class MainWindow : Window
     private void ResetIdleTimer()
     {
         var minutes = App.ConfigManager.Config.ModelKeepAliveMinutes;
-        if (minutes <= 0) return;
-
-        _idleTimer?.Stop();
-        _idleTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(minutes) };
-        _idleTimer.Tick += async (_, _) =>
+        if (minutes <= 0)
         {
             _idleTimer.Stop();
+            return;
+        }
+
+        _idleTimer.Stop();
+        _idleTimer.Interval = TimeSpan.FromMinutes(minutes);
+        _idleTimer.Start();
+    }
+
+    private void OnAgentResponseReceived(string _)
+        => Dispatcher.BeginInvoke(new Action(ResetIdleTimer));
+
+    private async void IdleTimer_Tick(object? sender, EventArgs e)
+    {
+        _idleTimer.Stop();
+        try
+        {
             await (_ollamaClient?.UnloadModelAsync(App.ConfigManager.Config.OllamaModel)
                    ?? Task.CompletedTask);
-        };
-        _idleTimer.Start();
+        }
+        catch (Exception ex)
+        {
+            App.WriteCrash("MainWindow.IdleTimer_Tick", ex);
+        }
+    }
+
+    private void ClipboardHintTimer_Tick(object? sender, EventArgs e)
+    {
+        _clipboardHintTimer.Stop();
+        if (!ChatViewModel.IsBusy)
+            ChatViewModel.StatusText = "";
     }
 }
