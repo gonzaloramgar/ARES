@@ -13,7 +13,7 @@ releases/
 # ─── Runtime data (generada por la app, local a cada usuario) ────
 # Toda la carpeta data/ se genera al iniciar: config, historial,
 # herramientas escaneadas, voces TTS descargadas, logs y crashes.
-AresAssistant/data/
+ARES-desktop/AresAssistant/data/
 
 # ─── OS ──────────────────────────────────────────────────────────
 .DS_Store
