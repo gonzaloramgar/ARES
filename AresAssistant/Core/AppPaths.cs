@@ -15,6 +15,7 @@ public static class AppPaths
     public static string ProductivityFile => Path.Combine(DataDirectory, "productivity.json");
     public static string ReliabilityTelemetryFile => Path.Combine(DataDirectory, "reliability-telemetry.json");
     public static string WeatherCacheFile => Path.Combine(DataDirectory, "weather-cache.json");
+    public static string SkillsFile => Path.Combine(DataDirectory, "skills.json");
     public static string CustomAppsFile => Path.Combine(DataDirectory, "custom-apps.json");
     public static string PluginsDirectory => Path.Combine(DataDirectory, "plugins");
     public static string TtsDirectory => Path.Combine(DataDirectory, "tts");

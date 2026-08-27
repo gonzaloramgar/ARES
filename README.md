@@ -4,6 +4,18 @@ ARES es un asistente de IA para Windows construido en WPF y .NET 8, que corre so
 
 ---
 
+## Novedades (v1.5)
+
+La v1.5 convierte a ARES en un **agente de escritorio** que entiende la pantalla y **mueve el ratón solo**:
+
+- **Manos (control humano)** — Ratón (mover, clic, doble clic, arrastrar, scroll), teclado (`press_key` con combos como `Ctrl+S`, `Alt+Tab`) y ventanas (enfocar, mover, redimensionar, cerrar, capturar, listar con coordenadas). Bloqueo de combinaciones peligrosas.
+- **Ojos (computer-use)** — `understand_screen` devuelve **elementos con coordenadas reales** de pantalla; `click_screen_element` y `find_element_coords` **localizan por texto y actúan** (UI Automation y, si no, visión). Para manejar apps o navegar (p. ej. Brave) **nunca usa `run_command`**: abre, enfoca, clica, escribe y verifica con visión.
+- **Aprendizaje** — `skill_save` / `skill_recall` / `skill_list` / `skill_forget` / `run_skill` guardan y reutilizan **procedimientos** (objetivo + pasos) con **embeddings** para recordar por similitud semántica. ARES mejora con el tiempo.
+
+> **Modelos nuevos a instalar (opcionales pero recomendados):** `ollama pull qwen2.5-vl:7b` (visión con coordenadas) y `ollama pull nomic-embed-text` (skills por similitud). Más abajo en "Modelos compatibles".
+
+---
+
 ## Interfaz
 
 ### Dos modos de visualización
@@ -123,6 +135,47 @@ Una vez instalado, descarga automáticamente el modelo correspondiente al modo e
 | `get_location` | Detecta la ciudad y coordenadas del usuario por IP (sin GPS) |
 | `get_weather` | Obtiene el clima actual usando coordenadas (Open-Meteo, sin API key) |
 
+### Herramientas de control (Manos) — ratón, teclado y ventanas
+| Herramienta | Descripción |
+|---|---|
+| `mouse_move` | Mueve el cursor (absoluto `x,y` o relativo `dx,dy`) |
+| `mouse_click` | Clic izquierdo/derecho/central (opcionalmente mueve antes) |
+| `mouse_double_click` | Doble clic en la posición actual o en unas coordenadas |
+| `mouse_drag` | Arrastra desde un punto a otro manteniendo el botón pulsado |
+| `mouse_scroll` | Gira la rueda del ratón (positivo = arriba) |
+| `press_key` | Pulsa una tecla con modificadores (`Ctrl+S`, `Alt+Tab`, …). Bloquea combos peligrosos (Ctrl+Alt+Supr, Win+L) |
+| `type_text` | Escribe texto en la ventana activa |
+| `focus_window` | Activa y trae al frente una ventana por título |
+| `get_foreground_window` | Devuelve el título y proceso de la ventana activa |
+| `list_windows` | Lista ventanas con título, proceso y **coordenadas** |
+| `set_window_position` | Mueve y/o redimensiona una ventana por título |
+| `move_window` | Mueve una ventana manteniendo su tamaño |
+| `resize_window` | Redimensiona una ventana manteniendo su posición |
+| `close_window` | Cierra una ventana (`WM_CLOSE`); protege procesos críticos |
+| `screenshot_window` | Captura solo una ventana concreta a PNG |
+| `get_screen_info` | Límites del escritorio virtual, escala DPI y posición del cursor |
+
+### Herramientas de visión y UI Automation (Ojos) — bucle computer-use
+| Herramienta | Descripción |
+|---|---|
+| `understand_screen` | Captura pantalla/ventana y devuelve **elementos con coordenadas reales** de pantalla (JSON) |
+| `analyze_screen` | Analiza la captura en texto con el modelo multimodal |
+| `list_uia_elements` | Lista los **controles reales** (UI Automation) de una ventana con nombre, tipo y coordenadas |
+| `click_uia_element` | Activa un control real por su nombre (Invoke/Toggle/Select o clic) |
+| `click_screen_element` | **Encuentra por su texto y clica solo** (UI Automation → visión). No necesitas dar coordenadas |
+| `find_element_coords` | Devuelve las coordenadas reales de un elemento por su texto (UI Automation → visión) |
+
+### Herramientas de aprendizaje (Aprendizaje) — memoria de procedimientos
+| Herramienta | Descripción |
+|---|---|
+| `skill_save` | Guarda un procedimiento (objetivo + pasos con herramienta y argumentos) y su embedding |
+| `skill_recall` | Recupera procedimientos relacionados con un objetivo |
+| `skill_list` | Lista todos los procedimientos aprendidos |
+| `skill_forget` | Elimina un procedimiento por su objetivo |
+| `run_skill` | Ejecuta un procedimiento guardado paso a paso con las herramientas reales |
+
+> **Computer-use**: ARES entiende la pantalla y **mueve el ratón solo**. Para manejar apps o navegar (p. ej. Brave) **nunca usa `run_command`**: abre, enfoca, localiza el elemento por texto (`click_screen_element`), escribe y verifica con visión.
+
 ### Escaneo de aplicaciones inteligente
 - **Registry + Start Menu** — Detecta aplicaciones instaladas vía registro de Windows y accesos directos del menú Inicio
 - **Steam** — Escanea todas las bibliotecas de Steam (parsea `libraryfolders.vdf`) y encuentra el ejecutable correcto de cada juego
@@ -180,6 +233,24 @@ ARES usa la API nativa de herramientas de Ollama. Solo ciertos modelos generan `
 | `phi4`, `gemma`, `deepseek-r1` | ❌ No soportado | — | No generan `tool_calls` |
 
 > **qwen2.5:7b** es el modelo por defecto y el más probado con ARES. **qwen2.5:14b** ofrece respuestas notablemente mejores si el hardware lo permite (recomendado con 16+ GB RAM o GPU con 10+ GB VRAM).
+
+### Modelos adicionales recomendados (v1.5 — visión y aprendizaje)
+
+ARES usa un **modelo multimodal** para "ver" la pantalla y un **modelo de embeddings** para recordar procedimientos por similitud. Son opcionales: sin ellos ARES sigue funcionando (la visión cae a texto y las skills se recuperan por texto), pero con ellos gana mucho:
+
+| Modelo | Uso | Tamaño aprox. | Por qué |
+|---|---|---|---|
+| `qwen2.5-vl:7b` | **Visión / computer-use** | ~6 GB | Localiza elementos con coordenadas para `understand_screen`, `click_screen_element` y `find_element_coords`. **Recomendado** con GPU de 8+ GB VRAM |
+| `moondream:latest` | Visión (ligera) | ~1.7 GB | Análisis en texto; se queda corto con coordenadas. Fallback por defecto |
+| `nomic-embed-text` | **Embeddings / aprendizaje** | ~0.2 GB | Permite que `skill_recall` y `run_skill` encuentren procedimientos por **similitud semántica** |
+
+Instálalos con:
+```bash
+ollama pull qwen2.5-vl:7b
+ollama pull nomic-embed-text
+```
+
+> **Consejo**: con 8 GB de VRAM, `qwen2.5-vl:7b` es la mejor opción para clics precisos por visión. Si solo tienes la CPU/GPU ligera, puedes quedarte con `moondream:latest`, pero el clic por visión será menos preciso y convendrá usar más `list_uia_elements`/`click_uia_element`.
 
 ---
 
@@ -284,7 +355,11 @@ AresAssistant/
 │   ├── HardwareDetector.cs        # Detección de CPU/RAM
 │   ├── StartupManager.cs          # Autoarranque con Windows (HKCU)
 │   ├── GlobalHotkeyManager.cs     # Hotkeys globales Win32
-│   └── WindowNativeMethods.cs     # P/Invoke para operaciones de ventanas
+│   ├── WindowNativeMethods.cs     # P/Invoke para operaciones de ventanas
+│   ├── InputController.cs         # SendInput: ratón + teclado (mover, clic, teclas, combos)
+│   ├── WindowManager.cs           # EnumWindows, foco fiable, mover/redimensionar, captura por ventana
+│   ├── UiAutomationProvider.cs    # Árbol de controles reales (UI Automation)
+│   └── SkillLibrary.cs            # Procedimientos aprendidos + embeddings (skills)
 └── Tools/
     ├── PathResolver.cs
     ├── GenericOpenAppTool.cs
@@ -298,6 +373,13 @@ AresAssistant/
     ├── ClipboardTools.cs
     ├── WindowTools.cs
     ├── VolumeTool.cs
+    ├── MouseTools.cs                 # ratón: mover/clic/doble clic/arrastrar/scroll
+    ├── KeyboardTools.cs              # press_key con modificadores
+    ├── WindowControlTools.cs         # focus/posición/cerrar/capturar ventana + screen_info
+    ├── UnderstandScreenTool.cs       # visión estructurada con coordenadas reales
+    ├── UiAutomationTools.cs          # list_uia_elements / click_uia_element
+    ├── ScreenClickTools.cs           # click_screen_element / find_element_coords (clic por texto)
+    ├── SkillTools.cs                 # skill_save/recall/list/forget/run_skill
     ├── ToolRegistry.cs
     └── ToolDispatcher.cs
 ```
@@ -310,6 +392,7 @@ data/
 ├── chat-history.json     # Historial de conversaciones
 ├── tools.json            # Herramientas del escáner (se regenera cada arranque)
 ├── custom-apps.json      # Apps guardadas manualmente (persistente)
+├── skills.json           # Procedimientos aprendidos (skills) + embeddings
 ├── tts/                  # Modelos Piper TTS (descargados automáticamente)
 ├── logs/
 │   ├── actions_*.log     # Log de acciones ejecutadas

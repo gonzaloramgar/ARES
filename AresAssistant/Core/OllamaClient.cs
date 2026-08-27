@@ -352,6 +352,32 @@ public class OllamaClient
             catch { /* skip malformed lines */ }
         }
     }
+
+    /// <summary>
+    /// Genera el embedding (vector) de un texto con el modelo indicado.
+    /// Devuelve null si el modelo no está instalado o falla; ARES sigue funcionando sin embeddings.
+    /// </summary>
+    public async Task<List<float>?> EmbedAsync(string text, string model = "nomic-embed-text")
+    {
+        try
+        {
+            var payload = JsonConvert.SerializeObject(new { model, input = text });
+            var response = await _http.PostAsync(
+                $"{BaseUrl}/api/embed",
+                new StringContent(payload, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) return null;
+
+            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var obj = JObject.Parse(body);
+            var emb = obj["embeddings"]?.FirstOrDefault();
+            if (emb == null) return null;
+            return emb.Select(x => x?.Value<float>() ?? 0f).ToList();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }
 
 /// <summary>One chunk from the streaming response — either a text token or a full tool-call response.</summary>

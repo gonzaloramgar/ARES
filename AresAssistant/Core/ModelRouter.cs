@@ -59,13 +59,19 @@ public static class ModelRouter
     public static bool IsLikelyVisionModel(string modelName)
     {
         var m = (modelName ?? string.Empty).ToLowerInvariant();
+        // Forma normalizada sin guiones/puntos/espacios para detectar variantes como "qwen2.5-vl".
+        var norm = m.Replace("-", "").Replace("_", "").Replace(".", "").Replace(" ", "");
         return m.Contains("llava") ||
                m.Contains("bakllava") ||
                m.Contains("moondream") ||
                m.Contains("vision") ||
-               m.Contains("minicpm-v") ||
-               m.Contains("qwen2.5vl") ||
-               m.Contains("qwen-vl");
+               m.Contains("minicpm") ||
+               norm.Contains("qwen2.5vl") ||
+               norm.Contains("qwen2vl") ||
+               m.Contains("phi3-vision") ||
+               m.Contains("llama3.2-vision") ||
+               m.Contains("internvl") ||
+               m.Contains("gemma3");
     }
 
     public static List<string> GetMissingPreferredModels(AppConfig config, List<string> installedModels)

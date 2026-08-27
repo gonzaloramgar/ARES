@@ -80,6 +80,7 @@ public partial class MainWindow : Window
             AutoApproveConfirmations = config.AutonomousMode
         };
         var memoryStore = new PersistentMemoryStore(AppPaths.MemoryFile);
+        var skillLibrary = new SkillLibrary(AppPaths.SkillsFile);
         var processContextProvider = new ProcessContextProvider();
         var scheduledStore = new ScheduledTaskStore(AppPaths.ScheduledTasksFile);
         var productivityTracker = new ProductivityTracker(AppPaths.ProductivityFile);
@@ -104,6 +105,38 @@ public partial class MainWindow : Window
         registry.Register(new MinimizeWindowTool());
         registry.Register(new MaximizeWindowTool());
         registry.Register(new TypeTextTool());
+
+        // Fase 1 — Manos: ratón, teclado y control de ventanas
+        registry.Register(new MouseMoveTool());
+        registry.Register(new MouseClickTool());
+        registry.Register(new MouseDoubleClickTool());
+        registry.Register(new MouseDragTool());
+        registry.Register(new MouseScrollTool());
+        registry.Register(new PressKeyTool());
+        registry.Register(new FocusWindowTool());
+        registry.Register(new GetForegroundWindowTool());
+        registry.Register(new SetWindowPositionTool());
+        registry.Register(new MoveWindowTool());
+        registry.Register(new ResizeWindowTool());
+        registry.Register(new CloseWindowTool());
+        registry.Register(new ScreenshotWindowTool());
+        registry.Register(new ListWindowsDetailedTool());
+        registry.Register(new GetScreenInfoTool());
+
+        // Fase 2 — Ojos: visión estructurada + UI Automation + clic por texto
+        registry.Register(new UnderstandScreenTool(ollamaClient, App.ConfigManager));
+        registry.Register(new ListUiaElementsTool());
+        registry.Register(new ClickUiaElementTool());
+        registry.Register(new ClickScreenElementTool(ollamaClient, App.ConfigManager));
+        registry.Register(new FindElementCoordsTool(ollamaClient, App.ConfigManager));
+
+        // Fase 3 — Aprendizaje: procedimientos/skills
+        registry.Register(new SkillSaveTool(skillLibrary, ollamaClient));
+        registry.Register(new SkillRecallTool(skillLibrary, ollamaClient));
+        registry.Register(new SkillListTool(skillLibrary));
+        registry.Register(new SkillForgetTool(skillLibrary));
+        registry.Register(new RunSkillTool(dispatcher, skillLibrary, ollamaClient));
+
         registry.Register(new CreateFolderTool());
         registry.Register(new DeleteFolderTool());
         registry.Register(new RecycleBinTool());
@@ -143,7 +176,7 @@ public partial class MainWindow : Window
 
         await Dispatcher.Yield(DispatcherPriority.Background);
 
-        var agentLoop = new AgentLoop(ollamaClient, history, registry, dispatcher, config, telemetryStore, memoryStore, processContextProvider);
+        var agentLoop = new AgentLoop(ollamaClient, history, registry, dispatcher, config, telemetryStore, memoryStore, processContextProvider, skillLibrary);
         _ = agentLoop.WarmUpAsync(); // Pre-load model into RAM to eliminate cold-start delay
 
         var speech = new SpeechEngine { Enabled = config.VoiceEnabled, Volume = config.TtsVolume, VoiceGender = config.TtsVoiceGender, SkipLocalFallback = true };

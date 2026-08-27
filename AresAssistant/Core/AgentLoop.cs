@@ -22,6 +22,7 @@ public class AgentLoop
     private readonly ReliabilityTelemetryStore? _telemetry;
     private readonly PersistentMemoryStore? _memoryStore;
     private readonly ProcessContextProvider? _processContextProvider;
+    private readonly SkillLibrary? _skillLibrary;
 
     /// <summary>Fired when the complete response is ready (after streaming ends).</summary>
     public event Action<string>? ResponseReceived;
@@ -50,7 +51,8 @@ public class AgentLoop
         AppConfig config,
         ReliabilityTelemetryStore? telemetry = null,
         PersistentMemoryStore? memoryStore = null,
-        ProcessContextProvider? processContextProvider = null)
+        ProcessContextProvider? processContextProvider = null,
+        SkillLibrary? skillLibrary = null)
     {
         _ollamaClient = ollamaClient;
         _history = history;
@@ -60,6 +62,7 @@ public class AgentLoop
         _telemetry = telemetry;
         _memoryStore = memoryStore;
         _processContextProvider = processContextProvider;
+        _skillLibrary = skillLibrary;
     }
 
     public void InitSystemPrompt()
@@ -136,11 +139,33 @@ public class AgentLoop
             sb.AppendLine("## HERRAMIENTAS");
             sb.AppendLine("Llama siempre a la herramienta ANTES de responder. Nunca describas una acción sin ejecutarla primero.");
             sb.AppendLine("Disponibles: open_app, open_folder, close_app, create_folder, delete_folder, recycle_bin,");
-            sb.AppendLine("  read_file, write_file, search_web, search_browser, run_command, screenshot, analyze_screen, type_text,");
+            sb.AppendLine("  read_file, write_file, search_web, search_browser, run_command, take_screenshot, analyze_screen, type_text,");
             sb.AppendLine("  system_info, volume, list_open_windows, minimize_window, maximize_window,");
             sb.AppendLine("  clipboard_read, clipboard_write, remember_app, get_location, get_weather,");
             sb.AppendLine("  memory_write, memory_read, memory_forget, action_history,");
             sb.AppendLine("  schedule_add, schedule_list, schedule_remove, schedule_simulate.");
+            sb.AppendLine();
+            sb.AppendLine("CONTROL DE RATÓN Y TECLADO (coordenadas en píxeles físicos del escritorio virtual; usa get_screen_info/list_windows para conocer la geometría):");
+            sb.AppendLine("  mouse_move {x,y} o {dx,dy}; mouse_click {button:left|right|middle, x?, y?}; mouse_double_click;");
+            sb.AppendLine("  mouse_drag {from_x,from_y,to_x,to_y}; mouse_scroll {delta (positivo=arriba)};");
+            sb.AppendLine("  press_key {key, modifiers:[ctrl,alt,shift,win], times?} — ej. Ctrl+S, Alt+Tab; type_text {text}.");
+            sb.AppendLine("CONTROL DE VENTANAS:");
+            sb.AppendLine("  focus_window {title} (activar antes de escribir/clicar); get_foreground_window; list_windows;");
+            sb.AppendLine("  set_window_position {title,x,y,width?,height?}; move_window {title,x,y}; resize_window {title,width,height};");
+            sb.AppendLine("  close_window {title} (no cierra procesos críticos); screenshot_window {title} (captura solo esa ventana); get_screen_info.");
+            sb.AppendLine("Nota: para hacer clic en una app, primero focus_window o usa sus coordenadas reales (obtenidas con list_windows/analyze_screen).");
+            sb.AppendLine("VISIÓN / UI AUTOMATION (computer-use: localiza → actúa → verifica):");
+            sb.AppendLine("  understand_screen {question?, window?} → JSON con elementos y coordenadas; list_uia_elements {window?};");
+            sb.AppendLine("  click_uia_element {name, window?} → activa un control real; analyze_screen {question} → análisis en texto.");
+            sb.AppendLine("APRENDIZAJE (memoria de procedimientos):");
+            sb.AppendLine("  skill_save {goal, steps:[{tool,args,description}]}; skill_recall {goal}; skill_list; skill_forget {goal}; run_skill {goal}.");
+            sb.AppendLine("REGLAS PARA MANEJAR APLICACIONES Y NAVEGAR (computer-use):");
+            sb.AppendLine("  · NUNCA uses run_command para abrir/controlar apps ni navegar. Usa SIEMPRE el ratón/teclado con las herramientas de captura y clic.");
+            sb.AppendLine("  · Localiza elementos por su TEXTO: click_screen_element {label} o find_element_coords {label} → clican solos; no necesitas dar coordenadas.");
+            sb.AppendLine("  · Para ver qué hay: list_uia_elements {window?} (controles reales) o understand_screen {question?, window?} (elementos + coordenadas).");
+            sb.AppendLine("  · RECETA navegar en un navegador (p. ej. Brave): 1) open_app 'Brave', 2) focus_window 'Brave', 3) click_screen_element {label:'barra de dirección'}, 4) type_text {text:'https://...'}, 5) press_key {key:'enter'}, 6) understand_screen para verificar la página, 7) si hay un buscador, click_screen_element {label:'Buscar'} + type_text + enter.");
+            sb.AppendLine("  · Cierra el bucle verificación: tras cada clic/escritura, usa understand_screen/analyze_screen para confirmar que la pantalla cambió como esperabas. Si no, intenta otra estrategia (máximo ~8 pasos).");
+            sb.AppendLine("  · Tras conseguir un objetivo multicapa, usa skill_save para aprenderlo y reutilizarlo en el futuro.");
             sb.AppendLine("Clima: puedes usar get_weather con ciudad o sin parámetros (auto-ubicación). Usa get_location si necesitas mostrar la ubicación exacta primero. App desconocida con ruta: remember_app.");
             sb.AppendLine("Resultado de herramienta → informa brevemente, no repitas la misma herramienta.");
             sb.AppendLine("Si el usuario solo saluda o charla (ej: 'hola', 'buenas', 'qué tal'), responde breve y NO uses herramientas.");
@@ -247,6 +272,18 @@ public class AgentLoop
             {
                 var ctx = _processContextProvider.GetCompactContext();
                 userMessage = $"[Contexto apps activas: {ctx}]\n\n{userMessage}";
+            }
+
+            if (_skillLibrary != null)
+            {
+                try
+                {
+                    var goalEmb = await _ollamaClient.EmbedAsync(userMessage!).ConfigureAwait(false);
+                    var skillCtx = _skillLibrary.BuildPromptContext(userMessage!, goalEmb);
+                    if (!string.IsNullOrWhiteSpace(skillCtx))
+                        userMessage = $"[Procedimientos aprendidos que podrían aplicar:\n{skillCtx}]\n\n{userMessage}";
+                }
+                catch { /* los embeddings son opcionales; no romper el flujo */ }
             }
 
             var (numCtx, numThread, historyLimit, numPredict, numBatch) = _config.GetPerformanceParams();
